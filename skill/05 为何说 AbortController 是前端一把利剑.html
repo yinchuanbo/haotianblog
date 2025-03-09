@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>为何说 AbortController 是前端一把利剑</title>
+    <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
+</head>
+<body class="line-numbers">
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-home">首页</a>
+    </nav>
+    <article class="article-container">
+        <!-- 左侧目录 -->
+        <aside class="article-toc">
+            <div class="toc-header">
+                <div class="toc-title">
+                    <i class="fas fa-list"></i>
+                    <span>文章目录</span>
+                </div>
+            </div>
+            <div class="toc-content"></div>
+        </aside>
+
+        <!-- 中间文章主体 -->
+        <main class="article-main">
+            <header class="article-header">
+                <h1>为何说 AbortController 是前端一把利剑</h1>
+                <div class="article-meta">
+                    
+                    <time datetime="Sun Mar 09 2025 02:12:26 GMT+0800 (中国标准时间)">
+                        <i class="far fa-calendar-alt"></i>
+                        2025年3月9日
+                    </time>
+                    
+                    <div class="article-tags">
+                        <span class="tag"><i class="fas fa-tag"></i>AbortController</span>
+                    </div>
+                    
+                </div>
+            </header>
+            <div class="article-content">
+                <h2>1. 通过 AbortController 提前终止 fetch</h2>
+<p>首先看一个例子，其使用 AbortController 来实现可以提前中止的 fetch：</p>
+<pre><code class="language-js">fetchButton.onclick = async () =&gt; {
+  const controller = new AbortController();
+  // 添加取消按钮
+  abortButton.onclick = () =&gt; controller.abort();
+  try {
+    const r = await fetch(&quot;/json&quot;, { signal: controller.signal });
+    const json = await r.json();
+    // 这里执行业务逻辑
+  } catch (e) {
+    const isUserAbort = e.name === &quot;AbortError&quot;;
+    // 如果是 AbortController 取消的则是 AbortError（一种 DOMException）
+  }
+};
+</code></pre>
+<p>上面示例展示了在 <code>AbortController</code> 出现之前不可能实现的事情，即 <code>主动取消网络请求</code>。浏览器将提前终止 fetch，从而节省用户网络带宽。当然，提前终止也不必非要由用户手动发起。</p>
+<p>上面示例中 <code>controller.signal</code> 返回的是 <code>AbortSignal</code>，其代表一个信号对象，其允许开发者与异步操作（例如 fetch 请求）进行通信，并在需要时通过 AbortController 对象中止。</p>
+<p>如果开发者想从多个信号中中止，可以使用 <code>AbortSignal.any()</code> 组合成单个信号，比如下面的示例：</p>
+<pre><code class="language-js">try {
+  const controller = new AbortController();
+  const timeoutSignal = AbortSignal.timeout(5000);
+  const res = await fetch(url, {
+    // This will abort the fetch when either signal is aborted
+    signal: AbortSignal.any([controller.signal, timeoutSignal]),
+  });
+  const body = await res.json();
+} catch (e) {
+  if (e.name === &quot;AbortError&quot;) {
+    // Notify the user of abort.
+  } else if (e.name === &quot;TimeoutError&quot;) {
+    // Notify the user of timeout
+  } else {
+    // A network error, or some other problem.
+    console.log(`Type: ${e.name}, Message: ${e.message}`);
+  }
+}
+</code></pre>
+<p>AbortController 和 AbortSignal 两者用途还是有一定的区别：</p>
+<ul>
+<li><code>AbortController</code>：允许通过 controller.abort() 显式中止其附加的信号</li>
+<li><code>AbortSignal</code> ：不能直接中止，但开发者可以将其传递给 fetch() 之类的调用或直接监听其中止状态。</li>
+</ul>
+<p>可以使用 <code>signal.aborted</code> 检查其状态，或为 <code>abort</code> 事件添加事件监听器，例如：fetch() 在内部执行此操作 。</p>
+<pre><code class="language-js">if (signal.aborted) {}
+signal.addEventListener(&#39;abort&#39;, () =&gt; ());
+</code></pre>
+<p>AbortController 取消请求后服务器就不会继续处理该请求，也不会发送响应，从而避免了不必要的数据传输。同时，针对客户端来说会减少并发的连接数量，提高页面的响应性能。</p>
+<h2>2.AbortController 的典型使用场景</h2>
+<h3>2.1 中止 WebSocket 等传统对象</h3>
+<p>很多老版本的 DOM API 其实并不支持 AbortSignal，例如：WebSocket，其只有一个 <code>.close()</code> 方法用于在请求完成后关闭连接。此时，开发者可以通过下面的方式显式取消请求：</p>
+<pre><code class="language-js">function abortableSocket(url, signal) {
+  const w = new WebSocket(url);
+  if (signal.aborted) {
+    w.close();
+    // 已经取消，直接失败
+  }
+  signal.addEventListener(&quot;abort&quot;, () =&gt; w.close());
+  return w;
+}
+</code></pre>
+<p>请注意，如果已经中止，AbortSignal 不会触发其 “abort”，因此必须检查是否已经 aborted，在这种情况下立即 .close()。</p>
+<h3>2.2 移除事件处理程序</h3>
+<p>在通过 removeEventListener 移除 DOM 事件处理函数时，开发者必须保证第二个事件处理函数是同一个。</p>
+<pre><code class="language-js">window.addEventListener(&quot;resize&quot;, () =&gt; doSomething());
+// addEventListener 和 removeEventListener 非同一个函数
+window.removeEventListener(&quot;resize&quot;, () =&gt; doSomething());
+</code></pre>
+<p>有了 AbortController 后，这一切变得非常简单，开发者只需要将 signal 传递给 addEventListener 的第三个参数即可。</p>
+<pre><code class="language-js">const controller = new AbortController();
+const { signal } = controller;
+window.addEventListener(&quot;resize&quot;, () =&gt; doSomething(), { signal });
+// 通过. abort() 方法移除事件处理函数
+controller.abort();
+</code></pre>
+<p>当然，针对旧版本的浏览器可以尝试添加 Polyfill 以支持 AbortController。</p>
+<h3>2.3 React hooks 中的异步任务</h3>
+<p>在 React 中，如果 Effect 在再次触发之前没有完成，开发者一般不容易发现，此时 Effect 会并行运行。</p>
+<pre><code class="language-js">function FooComponent({something}) {
+  useEffect(async () =&gt; {
+    const j = await fetch(url + something);
+    // do something with J
+  }, [something]);
+  return &lt;&gt;...&lt;&gt;;
+}
+</code></pre>
+<p>此时，开发者可以做的是创建一个 AbortController，每当下一个 useEffect 调用运行时就中止上一个请求：</p>
+<pre><code class="language-js">function FooComponent({something}) {
+  useEffect(() =&gt; {
+    const controller = new AbortController();
+    const {signal} = controller;
+    const p = (async () =&gt; {
+      // 真正执行的逻辑
+      const j = await fetch(url + something, { signal});
+      // 这里处理返回值
+    })();
+    return () =&gt; controller.abort();
+  }, [something]);
+  return &lt;&gt;...&lt;&gt;;
+}
+</code></pre>
+<h3>2.4 React hooks 中的异步任务</h3>
+<p>Node.js 里新版的 setTimeout 可以用 AbortController 取消，例如下面的代码：</p>
+<pre><code class="language-js">const { setTimeout: setTimeoutPromise } = require(&quot;node:timers/promises&quot;);
+const ac = new AbortController();
+const signal = ac.signal;
+// 📢 这里传入了 AbortSignal
+setTimeoutPromise(1000, &quot;foobar&quot;, { signal })
+  .then(console.log)
+  .catch((err) =&gt; {
+    if (err.name === &quot;AbortError&quot;) console.log(&quot;The timeout was aborted&quot;);
+  });
+ac.abort();
+</code></pre>
+<p>不过这个 Promise 版的 setTimeout 并不传入回调，回调需要在 .then() 里或者 await 后面自己调用。</p>
+<p>但是，浏览器的 setTimeout 目前并不支持 AbortController，可能是原因是其已经设计了更先进的 <code>scheduler.postTask() API</code>，该方法用于根据优先级添加要执行的任务，因此 setTimeout 没理由增强了。</p>
+<pre><code class="language-js">// Declare a TaskController with default priority
+const abortTaskController = new TaskController();
+// Post task passing the controller&#39;s signal
+scheduler
+  .postTask(() =&gt; console.log(&quot;Task executing&quot;), {
+    signal: abortTaskController.signal,
+  })
+  .then((taskResult) =&gt; console.log(`${taskResult}`)) //This won&#39;t run!
+  .catch((error) =&gt; console.error(&quot;Error:&quot;, error)); // Log the error
+// Abort the task
+abortTaskController.abort();
+</code></pre>
+<p>值得一提的是， <code>TaskController</code> 是 AbortController 的子级，除了可以调用 abort() 取消 task，还可以通过 <code>setPriority()</code> 方法中途修改 task 的优先级，如果不需要控制优先级，则可以直接使用 AbortController。</p>
+
+            </div>
+            <div class="article-footer">
+                <div class="article-share">
+                    <span>分享文章：</span>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="linkedin"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <div class="article-actions">
+                    <button class="action-btn" id="backToTop"><i class="fas fa-arrow-up"></i> 返回顶部</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧相关文章 - 简化版 -->
+        
+        
+        <!-- 移动端目录切换按钮 -->
+        <button class="toc-toggle" aria-label="切换目录">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </article>
+    <script src="js/prism.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 目录切换功能
+        const toc = document.querySelector('.article-toc');
+        const tocToggle = document.querySelector('.toc-toggle');
+        
+        // 从 localStorage 获取目录状态
+        const tocCollapsed = localStorage.getItem('tocCollapsed') === 'true';
+        
+        // 初始化目录状态
+        if (tocCollapsed) {
+            toc.classList.add('collapsed');
+        }
+        
+        // 切换按钮点击事件
+        tocToggle.addEventListener('click', () => {
+            toc.classList.toggle('collapsed');
+            localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
+        });
+        
+        // 生成目录
+        const content = document.querySelector('.article-content');
+        const tocContent = document.querySelector('.toc-content');
+        const headings = content.querySelectorAll('h2, h3');
+        
+        if (headings.length > 0) {
+            const tocList = document.createElement('ul');
+            
+            headings.forEach((heading, index) => {
+                // 添加锚点ID
+                const id = `heading-${index}`;
+                heading.id = id;
+                
+                // 创建目录项
+                const li = document.createElement('li');
+                li.className = `toc-${heading.tagName.toLowerCase()}`;
+                
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.textContent = heading.textContent;
+                
+                li.appendChild(link);
+                tocList.appendChild(li);
+                
+                // 添加锚点链接到标题
+                const anchor = document.createElement('a');
+                anchor.className = 'heading-anchor';
+                anchor.href = `#${id}`;
+                anchor.innerHTML = '<i class="fas fa-link"></i>';
+                anchor.title = '复制链接';
+                
+                // 点击锚点复制链接
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = window.location.href.split('#')[0] + '#' + id;
+                    navigator.clipboard.writeText(url).then(() => {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'copy-tooltip';
+                        tooltip.textContent = '链接已复制';
+                        document.body.appendChild(tooltip);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.add('show');
+                        }, 10);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.remove('show');
+                            setTimeout(() => {
+                                document.body.removeChild(tooltip);
+                            }, 300);
+                        }, 2000);
+                    });
+                });
+                
+                heading.appendChild(anchor);
+                
+                // 点击目录项时在移动端收起目录
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1280) {
+                        toc.classList.add('collapsed');
+                        localStorage.setItem('tocCollapsed', 'true');
+                    }
+                });
+            });
+            
+            tocContent.appendChild(tocList);
+        }
+        
+        // 目录滚动高亮
+        const observerOptions = {
+            root: null,
+            rootMargin: '-100px 0px -66%',
+            threshold: [0, 1]
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                const tocItem = document.querySelector(`.toc-content a[href="#${id}"]`);
+                
+                if (entry.isIntersecting) {
+                    // 移除其他项的高亮
+                    document.querySelectorAll('.toc-content a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // 添加当前项的高亮
+                    tocItem?.classList.add('active');
+                    
+                    // 将当前项滚动到可视区域
+                    if (tocItem) {
+                        const tocContent = document.querySelector('.toc-content');
+                        const itemTop = tocItem.offsetTop;
+                        const contentHeight = tocContent.clientHeight;
+                        const scrollTop = tocContent.scrollTop;
+                        
+                        if (itemTop < scrollTop || itemTop > scrollTop + contentHeight) {
+                            tocContent.scrollTo({
+                                top: itemTop - contentHeight / 2,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        headings.forEach(heading => observer.observe(heading));
+        
+        // 代码块复制功能
+        const codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach((block, index) => {
+            const container = block.parentNode;
+            if (container.className === 'code-block') {
+                const language = block.querySelector('code').className.match(/language-([a-z]+)/)?.[1] || 'code';
+                container.setAttribute('data-language', language);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-button';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = '复制代码';
+                
+                copyBtn.addEventListener('click', () => {
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+                
+                container.appendChild(copyBtn);
+            }
+        });
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 分享按钮
+        const shareButtons = document.querySelectorAll('.share-btn');
+        shareButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const platform = btn.getAttribute('data-platform');
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(document.title);
+                
+                let shareUrl = '';
+                switch (platform) {
+                    case 'twitter':
+                        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                        break;
+                    case 'facebook':
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                        break;
+                    case 'linkedin':
+                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                        break;
+                }
+                
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank', 'width=600,height=400');
+                }
+            });
+        });
+        
+        // 图片点击放大
+        const images = document.querySelectorAll('.article-content img');
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                
+                const imgClone = document.createElement('img');
+                imgClone.src = img.src;
+                imgClone.alt = img.alt;
+                
+                overlay.appendChild(imgClone);
+                document.body.appendChild(overlay);
+                
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 10);
+                
+                overlay.addEventListener('click', () => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(overlay);
+                    }, 300);
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>

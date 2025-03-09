@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursor - 探索编程的艺术</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+
+      :root {
+        --background-color: #000000;
+        --text-primary: #ffffff;
+        --text-secondary: #9ca3af;
+        --text-tertiary: #6b7280;
+        --primary-color: #d4d4d8;
+        --primary-dark: #a1a1aa;
+        --primary-light: rgba(212, 212, 216, 0.1);
+        --accent-color: #e4e4e7;
+        --accent-light: rgba(228, 228, 231, 0.1);
+        --card-bg: #18181b;
+        --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+        --card-shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.3);
+        --border-radius: 8px;
+        --transition-speed: 0.3s;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "JetBrains Mono";
+        background: linear-gradient(
+          135deg,
+          var(--background-color) 0%,
+          #18181b 100%
+        );
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-style: italic;
+      }
+
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at center,
+          transparent 0%,
+          var(--background-color) 70%
+        );
+        z-index: 1;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(
+          120deg,
+          var(--text-primary),
+          var(--primary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeSlideUp 1s ease-out;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 2.5rem;
+        max-width: 600px;
+        animation: fadeSlideUp 1s ease-out 0.2s backwards;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        animation: fadeSlideUp 1s ease-out 0.4s backwards;
+      }
+
+      .cta-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+        background: var(--primary-light);
+        border: none;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        transition: all var(--transition-speed);
+        backdrop-filter: blur(8px);
+      }
+
+      .cta-button.primary {
+        background: var(--primary-color);
+        color: var(--background-color);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--card-shadow);
+      }
+
+      .cta-button.primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .features {
+        padding: 4rem 2rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        animation: fadeSlideUp 1s ease-out 0.6s backwards;
+      }
+
+      .feature-card {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        transition: all var(--transition-speed);
+        backdrop-filter: blur(8px);
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-shadow-hover);
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .feature-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .feature-card p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+
+      @keyframes fadeSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero p {
+          font-size: 1rem;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+        }
+
+        .features {
+          grid-template-columns: 1fr;
+          padding: 2rem 1rem;
+        }
+      }
+
+      .cursor-animation {
+        position: relative;
+        display: inline-block;
+      }
+
+      .cursor-animation::after {
+        content: "|";
+        position: absolute;
+        right: -0.5em;
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <h1><span class="cursor-animation">Cursor</span></h1>
+          <p>
+            探索编程的艺术，发现技术的美。在这里，每一行代码都是一次创新的旅程。
+          </p>
+          <div class="cta-buttons">
+            <a href="/skill" class="cta-button primary">
+              <i class="fas fa-book-open"></i>
+              开始学习
+            </a>
+            <a href="https://github.com/yinchuanbo" class="cta-button">
+              <i class="fab fa-github"></i>
+              GitHub
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h3>技术深度</h3>
+          <p>深入探讨编程技术，从基础到高级，系统化的学习路径。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h3>实践导向</h3>
+          <p>通过实际项目和案例，将理论知识转化为实践技能。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>社区互动</h3>
+          <p>加入充满活力的开发者社区，分享经验，共同成长。</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // 添加视差滚动效果
+      document.addEventListener("scroll", () => {
+        const scrolled = window.pageYOffset;
+        document.querySelector(".hero").style.transform = `translateY(${
+          scrolled * 0.5
+        }px)`;
+      });
+    </script>
+  </body>
+</html>

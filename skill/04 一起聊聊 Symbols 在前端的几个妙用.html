@@ -1,0 +1,498 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一起聊聊 Symbols 在前端的几个妙用</title>
+    <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
+</head>
+<body class="line-numbers">
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-home">首页</a>
+    </nav>
+    <article class="article-container">
+        <!-- 左侧目录 -->
+        <aside class="article-toc">
+            <div class="toc-header">
+                <div class="toc-title">
+                    <i class="fas fa-list"></i>
+                    <span>文章目录</span>
+                </div>
+            </div>
+            <div class="toc-content"></div>
+        </aside>
+
+        <!-- 中间文章主体 -->
+        <main class="article-main">
+            <header class="article-header">
+                <h1>一起聊聊 Symbols 在前端的几个妙用</h1>
+                <div class="article-meta">
+                    
+                    <time datetime="Sun Mar 09 2025 02:09:52 GMT+0800 (中国标准时间)">
+                        <i class="far fa-calendar-alt"></i>
+                        2025年3月9日
+                    </time>
+                    
+                    <div class="article-tags">
+                        <span class="tag"><i class="fas fa-tag"></i>Symbols</span>
+                    </div>
+                    
+                </div>
+            </header>
+            <div class="article-content">
+                <h2>1. JavaScript 的 Symbols 有什么用</h2>
+<p>Symbols 与其他 JavaScript 原语不同，其保证唯一性。</p>
+<p>当开发者使用 <code>Symbol(&#39;description&#39;)</code> 创建 Symbols 时，其值永远不会与任何其他 Symbols 相同，即使是使用相同描述创建的 Symbols，这种独特性使其在特定用例中非常强大。</p>
+<pre><code class="language-js">const symbol1 = Symbol(&quot;description&quot;);
+const symbol2 = Symbol(&quot;description&quot;);
+console.log(symbol1 === symbol2);
+// 输出 false
+</code></pre>
+<p>Symbols 的真正魅力在于对象处理，与字符串或数字不同，Symbols 可以用作属性键，而不会与现有属性发生冲突。这使其在向对象添加功能而不影响现有代码方面非常有用。</p>
+<pre><code class="language-js">const metadata = Symbol(&quot;elementMetadata&quot;);
+function attachMetadata(element, data) {
+  element[metadata] = data;
+  return element;
+}
+const div = document.createElement(&quot;div&quot;);
+const divWithMetadata = attachMetadata(div, { lastUpdated: Date.now() });
+console.log(divWithMetadata[metadata]);
+// {lastUpdated: 1684244400000}
+</code></pre>
+<p>同时，当使用 Symbol 作为属性键时，其不会显示在 <code>Object.keys()</code> 或普通 for...in 循环中。但是，开发者仍可以通过 <code>Object.getOwnPropertySymbols()</code> 访问这些属性。</p>
+<pre><code class="language-js">const nameKey = Symbol(&quot;name&quot;);
+const person = {
+  [nameKey]: &quot;Alex&quot;,
+  city: &quot;London&quot;,
+};
+console.log(Object.getOwnPropertySymbols(person));
+// [Symbol(name)]
+console.log(person[nameKey]);
+// 输出&#39;Alex&#39;
+</code></pre>
+<h2>2. Symbol.for 创建全局 Symbol 注册表</h2>
+<p>全局 Symbol 注册表为 Symbol 的使用增加了另一个维度。虽然普通的 Symbol 始终是唯一的，但有时开发者确实需要在代码的不同部分之间共享 Symbol，此时就是 <code>Symbol.for()</code> 的用武之地。</p>
+<pre><code class="language-js">// 使用 Symbol.for() 在不同模块之间共享 Symbol
+const PRIORITY_LEVEL = Symbol.for(&quot;priority&quot;);
+const PROCESS_MESSAGE = Symbol.for(&quot;processMessage&quot;);
+function createMessage(content, priority = 1) {
+  const message = {
+    content,
+    [PRIORITY_LEVEL]: priority,
+    [PROCESS_MESSAGE]() {
+      return `Processing: ${this.content} (Priority: ${this[PRIORITY_LEVEL]})`;
+    },
+  };
+  return message;
+}
+function processMessage(message) {
+  if (message[PROCESS_MESSAGE]) {
+    return message[PROCESS_MESSAGE]();
+  }
+  throw new Error(&quot;Invalid message format&quot;);
+}
+const msg = createMessage(&quot;Hello World&quot;, 2);
+console.log(processMessage(msg));
+// 输出 &quot;Processing: Hello World (Priority: 2)&quot;
+console.log(Symbol.for(&quot;processMessage&quot;) === PROCESS_MESSAGE);
+// 输出 true
+// 常规 Symbols 永远不相等
+console.log(Symbol(&quot;processMessage&quot;) === Symbol(&quot;processMessage&quot;)); // false
+</code></pre>
+<p><code>Symbol.for</code> 可以保证多次调用返回的值完全相同，因此也经常用于多个模块之间的内容共享。</p>
+<pre><code class="language-js">// 模块 A 的内容
+const SHARED_KEY = Symbol.for(&quot;app.sharedKey&quot;);
+const moduleA = {
+  [SHARED_KEY]: &quot;secret value&quot;,
+};
+// 模块 B 的内容，且在不同的文件中
+const sameKey = Symbol.for(&quot;app.sharedKey&quot;);
+console.log(SHARED_KEY === sameKey);
+// 输出 true
+console.log(moduleA[sameKey]);
+// 输出&#39;secret value&#39;
+// 常规 Symbols 多次调用永远不同‘
+const regularSymbol = Symbol(&quot;regular&quot;);
+const anotherRegular = Symbol(&quot;regular&quot;);
+console.log(regularSymbol === anotherRegular); // false
+</code></pre>
+<p><code>Symbol.for()</code> 创建的 Symbol 的作用类似于共享密钥，应用程序可以通过相同的名称共享。而常规 Symbol 始终唯一，即使具有相同的名称。</p>
+<h2>3. 使用 Symbols 修改 JavaScript 内置行为</h2>
+<p>JavaScript 提供了众多内置 Symbol 让开发者修改对象在不同情况下的行为方式，相当于语言功能的各种钩子。</p>
+<p>一个常见的用例是使用 <code>Symbol.iterator</code> 使对象可迭代，从而可以对对象使用 <code>for...of</code> 循环：</p>
+<pre><code class="language-js">// 添加 Symbol.iterator 让对象可迭代
+const tasks = {
+  items: [&quot;write code&quot;, &quot;review PR&quot;, &quot;fix bugs&quot;],
+  [Symbol.iterator]() {
+    let index = 0;
+    return {
+      next: () =&gt; {
+        if (index &lt; this.items.length) {
+          return { value: this.items[index++], done: false };
+        }
+        return { value: undefined, done: true };
+      },
+    };
+  },
+};
+for (let task of tasks) {
+  console.log(task);
+  // 输出值&#39;write code&#39;, &#39;review PR&#39;, &#39;fix bugs&#39;
+}
+</code></pre>
+<p>另一个强大的功能是 <code>Symbol.toPrimitive</code>，其用于控制对象如何转换为数字或字符串等原始值。</p>
+<pre><code class="language-js">const user = {
+  name: &quot;Alex&quot;,
+  score: 42,
+  [Symbol.toPrimitive](hint) {
+    // JavaScript 引擎使用 hint 参数表示类型
+    // hint 可以是&#39;number&#39;, &#39;string&#39;, or &#39;default&#39;
+    switch (hint) {
+      case &quot;number&quot;:
+        return this.score;
+      case &quot;string&quot;:
+        return this.name;
+      default:
+        return `${this.name} (${this.score})`;
+      // 其他例如  user + &#39;&#39;
+    }
+  },
+};
+console.log(+user);
+// + 操作符表示想要数字，输出 42
+console.log(`${user}`);
+// 模板字符串表示需要字符串, 输出 &quot;Alex&quot;
+console.log(user + &quot;&quot;);
+// `+ 字符串 ` 表示 &quot;Alex (42)&quot;
+</code></pre>
+<p>当然，开发者还可以通过 <code>Symbol.hasInstance</code> 修改 instanceof 的默认行为，比如下面的 JSONArray 对象：</p>
+<pre><code class="language-js">class JSONArray {
+  constructor() {
+    this.items = [];
+  }
+  // 自定义 instanceof 行为
+  static [Symbol.hasInstance](instance) {
+    return instance &amp;&amp; typeof instance === &quot;object&quot; &amp;&amp; &quot;items&quot; in instance;
+  }
+}
+</code></pre>
+<p>此时，下面代码的 instanceof 将直接输出 true:</p>
+<pre><code class="language-js">const a = { items: [] };
+a instanceof JSONArray; // 输出 true
+</code></pre>
+<h2>4. 使用 Symbol.species 进行继承控制</h2>
+<p>在 JavaScript 中使用数组时有时需要限制可以保存的值类型，这时就需要使用专用数组，不过值得注意的是其可能导致 <code>map()</code> 和 <code>filter()</code> 等方法出现意外行为。</p>
+<pre><code class="language-js">const createNumberArray = (...numbers) =&gt; {
+  const array = [...numbers];
+  array.push = function (item) {
+    if (typeof item !== &quot;number&quot;) {
+      throw new Error(&quot;Only numbers allowed&quot;);
+    }
+    return Array.prototype.push.call(this, item);
+  };
+  // 告诉 JavaScript 引擎使用常规数组方法，例如：map
+  // 此时 map 派生数组不受影响
+  Object.defineProperty(array.constructor, Symbol.species, {
+    get: function () {
+      return Array;
+    },
+  });
+  return array;
+};
+const nums = createNumberArray(1, 2, 3);
+nums.push(4);
+// Works ✅
+nums.push(&quot;5&quot;);
+// Error! ❌ (as expected for nums)
+const doubled = nums.map((x) =&gt; x * 2);
+doubled.push(&quot;6&quot;);
+// Works! ✅ (doubled is a regular array)
+</code></pre>
+<h2>5. Symbol 限制和陷阱</h2>
+<p>在 JSON 中使用 Symbol 需要特别注意，例如：Symbol 属性在 JSON 序列化过程中将完全消失，这一点与 React 利用 Symbol 防止服务器端 JSON 漏洞非常类似。</p>
+<pre><code class="language-js">const API_KEY = Symbol(&quot;apiKey&quot;);
+// 将 Symbol 用于属性 Key
+const userData = {
+  [API_KEY]: &quot;abc123xyz&quot;,
+  //  Symbol 用于隐藏的 API key
+  username: &quot;alex&quot;,
+  // 常规属性
+};
+console.log(userData[API_KEY]);
+// 输出值: &#39;abc123xyz&#39;
+// 序列化后 Symbol 完全丢失
+const savedData = JSON.stringify(userData);
+console.log(savedData);
+// 打印: {&quot;username&quot;:&quot;alex&quot;}
+</code></pre>
+<p>同时，Symbols 的字符串强制转换会导致另一个常见的陷阱。虽然开发者可能期望 Symbols 像其他基本类型一样工作，但它们对类型转换有严格的规则：</p>
+<pre><code class="language-js">const label = Symbol(&quot;myLabel&quot;);
+// 抛出类型错误
+console.log(label + &quot;is my label&quot;);
+// 开发者必须显式转化为 String
+console.log(String(label) + &quot;is my label&quot;);
+// 输出值 &quot;Symbol(myLabel) is my label&quot;
+</code></pre>
+<p>使用 Symbol 进行内存管理比较棘手，尤其是在使用全局 Symbol 注册表时。当没有引用时，常规 Symbol 可以被垃圾收集，但注册表 Symbol 会保留下来：</p>
+<pre><code class="language-js">// 常规 Symbol 可以垃圾回收
+let regularSymbol = Symbol(&quot;temp&quot;);
+regularSymbol = null;
+// 注册表 Registry Symbol 保留
+Symbol.for(&quot;permanent&quot;);
+// 即使没用引用也会保留
+console.log(Symbol.for(&quot;permanent&quot;) === Symbol.for(&quot;permanent&quot;));
+// 输出 true
+</code></pre>
+
+            </div>
+            <div class="article-footer">
+                <div class="article-share">
+                    <span>分享文章：</span>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="linkedin"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <div class="article-actions">
+                    <button class="action-btn" id="backToTop"><i class="fas fa-arrow-up"></i> 返回顶部</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧相关文章 - 简化版 -->
+        
+        
+        <!-- 移动端目录切换按钮 -->
+        <button class="toc-toggle" aria-label="切换目录">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </article>
+    <script src="js/prism.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 目录切换功能
+        const toc = document.querySelector('.article-toc');
+        const tocToggle = document.querySelector('.toc-toggle');
+        
+        // 从 localStorage 获取目录状态
+        const tocCollapsed = localStorage.getItem('tocCollapsed') === 'true';
+        
+        // 初始化目录状态
+        if (tocCollapsed) {
+            toc.classList.add('collapsed');
+        }
+        
+        // 切换按钮点击事件
+        tocToggle.addEventListener('click', () => {
+            toc.classList.toggle('collapsed');
+            localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
+        });
+        
+        // 生成目录
+        const content = document.querySelector('.article-content');
+        const tocContent = document.querySelector('.toc-content');
+        const headings = content.querySelectorAll('h2, h3');
+        
+        if (headings.length > 0) {
+            const tocList = document.createElement('ul');
+            
+            headings.forEach((heading, index) => {
+                // 添加锚点ID
+                const id = `heading-${index}`;
+                heading.id = id;
+                
+                // 创建目录项
+                const li = document.createElement('li');
+                li.className = `toc-${heading.tagName.toLowerCase()}`;
+                
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.textContent = heading.textContent;
+                
+                li.appendChild(link);
+                tocList.appendChild(li);
+                
+                // 添加锚点链接到标题
+                const anchor = document.createElement('a');
+                anchor.className = 'heading-anchor';
+                anchor.href = `#${id}`;
+                anchor.innerHTML = '<i class="fas fa-link"></i>';
+                anchor.title = '复制链接';
+                
+                // 点击锚点复制链接
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = window.location.href.split('#')[0] + '#' + id;
+                    navigator.clipboard.writeText(url).then(() => {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'copy-tooltip';
+                        tooltip.textContent = '链接已复制';
+                        document.body.appendChild(tooltip);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.add('show');
+                        }, 10);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.remove('show');
+                            setTimeout(() => {
+                                document.body.removeChild(tooltip);
+                            }, 300);
+                        }, 2000);
+                    });
+                });
+                
+                heading.appendChild(anchor);
+                
+                // 点击目录项时在移动端收起目录
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1280) {
+                        toc.classList.add('collapsed');
+                        localStorage.setItem('tocCollapsed', 'true');
+                    }
+                });
+            });
+            
+            tocContent.appendChild(tocList);
+        }
+        
+        // 目录滚动高亮
+        const observerOptions = {
+            root: null,
+            rootMargin: '-100px 0px -66%',
+            threshold: [0, 1]
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                const tocItem = document.querySelector(`.toc-content a[href="#${id}"]`);
+                
+                if (entry.isIntersecting) {
+                    // 移除其他项的高亮
+                    document.querySelectorAll('.toc-content a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // 添加当前项的高亮
+                    tocItem?.classList.add('active');
+                    
+                    // 将当前项滚动到可视区域
+                    if (tocItem) {
+                        const tocContent = document.querySelector('.toc-content');
+                        const itemTop = tocItem.offsetTop;
+                        const contentHeight = tocContent.clientHeight;
+                        const scrollTop = tocContent.scrollTop;
+                        
+                        if (itemTop < scrollTop || itemTop > scrollTop + contentHeight) {
+                            tocContent.scrollTo({
+                                top: itemTop - contentHeight / 2,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        headings.forEach(heading => observer.observe(heading));
+        
+        // 代码块复制功能
+        const codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach((block, index) => {
+            const container = block.parentNode;
+            if (container.className === 'code-block') {
+                const language = block.querySelector('code').className.match(/language-([a-z]+)/)?.[1] || 'code';
+                container.setAttribute('data-language', language);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-button';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = '复制代码';
+                
+                copyBtn.addEventListener('click', () => {
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+                
+                container.appendChild(copyBtn);
+            }
+        });
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 分享按钮
+        const shareButtons = document.querySelectorAll('.share-btn');
+        shareButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const platform = btn.getAttribute('data-platform');
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(document.title);
+                
+                let shareUrl = '';
+                switch (platform) {
+                    case 'twitter':
+                        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                        break;
+                    case 'facebook':
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                        break;
+                    case 'linkedin':
+                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                        break;
+                }
+                
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank', 'width=600,height=400');
+                }
+            });
+        });
+        
+        // 图片点击放大
+        const images = document.querySelectorAll('.article-content img');
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                
+                const imgClone = document.createElement('img');
+                imgClone.src = img.src;
+                imgClone.alt = img.alt;
+                
+                overlay.appendChild(imgClone);
+                document.body.appendChild(overlay);
+                
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 10);
+                
+                overlay.addEventListener('click', () => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(overlay);
+                    }, 300);
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>

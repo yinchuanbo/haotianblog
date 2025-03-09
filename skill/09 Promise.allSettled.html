@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise.allSettled</title>
+    <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
+</head>
+<body class="line-numbers">
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-home">首页</a>
+    </nav>
+    <article class="article-container">
+        <!-- 左侧目录 -->
+        <aside class="article-toc">
+            <div class="toc-header">
+                <div class="toc-title">
+                    <i class="fas fa-list"></i>
+                    <span>文章目录</span>
+                </div>
+            </div>
+            <div class="toc-content"></div>
+        </aside>
+
+        <!-- 中间文章主体 -->
+        <main class="article-main">
+            <header class="article-header">
+                <h1>Promise.allSettled</h1>
+                <div class="article-meta">
+                    
+                    <time datetime="Sun Mar 09 2025 17:50:25 GMT+0800 (中国标准时间)">
+                        <i class="far fa-calendar-alt"></i>
+                        2025年3月9日
+                    </time>
+                    
+                    <div class="article-tags">
+                        <span class="tag"><i class="fas fa-tag"></i>Promise</span>
+                    </div>
+                    
+                </div>
+            </header>
+            <div class="article-content">
+                <p>处理异步操作已经成为了 JavaScript 日常编码的核心部分。随着应用复杂度的增加，我们经常需要并发执行多个异步任务并合理处理它们的结果。长期以来，<code>Promise.all()</code>  一直是我们处理并发 Promise 的首选方法，但它存在一个致命缺陷：一旦任何一个 Promise 被拒绝（rejected），整个操作就会失败。</p>
+<h2>Promise.all 的局限性</h2>
+<p>让我们先回顾一下  <code>Promise.all()</code>  的工作方式及其局限性：</p>
+<pre><code class="language-js">const promises = [
+  fetch(&quot;/api/users&quot;),
+  fetch(&quot;/api/products&quot;),
+  fetch(&quot;/api/orders&quot;),
+];
+Promise.all(promises)
+  .then((results) =&gt; {
+    // 处理所有成功结果
+    const [users, products, orders] = results;
+    // 进一步处理数据
+  })
+  .catch((error) =&gt; {
+    // 如果任何一个 Promise 失败，就会执行这里
+    console.error(&quot;至少有一个请求失败：&quot;, error);
+    // 但我们不知道哪些请求成功了，哪些失败了
+  });
+</code></pre>
+<p>这种方法的主要问题在于：</p>
+<ul>
+<li>任何一个 Promise 失败都会导致整个操作失败</li>
+<li>你无法知道哪些操作成功，哪些失败</li>
+<li>你无法获取成功操作的结果</li>
+</ul>
+<p>在实际应用中，我们通常希望即使某些操作失败，也能继续处理成功的结果。例如，在加载仪表板组件时，即使某个组件的数据获取失败，我们也希望显示其他组件。</p>
+<h2>Promise.allSettled 来拯救</h2>
+<p><code>Promise.allSettled()</code>  解决了上述所有问题。它会等待所有 Promise 完成（无论成功或失败），并返回一个包含每个 Promise 结果的数组：</p>
+<pre><code class="language-js">const promises = [
+  fetch(&quot;/api/users&quot;).then((r) =&gt; r.json()),
+  fetch(&quot;/api/products&quot;).then((r) =&gt; r.json()),
+  fetch(&quot;/api/orders&quot;).then((r) =&gt; r.json()),
+];
+
+Promise.allSettled(promises).then((results) =&gt; {
+  results.forEach((result, index) =&gt; {
+    if (result.status === &quot;fulfilled&quot;) {
+      console.log(`Promise ${index} 成功：`, result.value);
+    } else {
+      console.log(`Promise ${index} 失败：`, result.reason);
+    }
+  });
+  // 你可以处理所有成功的结果，同时了解哪些失败了
+  const successfulData = results
+    .filter((result) =&gt; result.status === &quot;fulfilled&quot;)
+    .map((result) =&gt; result.value);
+  // 处理成功获取的数据
+  processData(successfulData);
+});
+</code></pre>
+<h2>Promise.allSettled 返回值结构</h2>
+<p><code>Promise.allSettled()</code>  的返回值是一个数组，每个元素对应一个 Promise 的结果，具有以下结构：</p>
+<ul>
+<li>对于成功的 Promise：<code>{ status: &#39;fulfilled&#39;, value: 结果值 }</code></li>
+<li>对于失败的 Promise：<code>{ status: &#39;rejected&#39;, reason: 错误原因 }</code></li>
+</ul>
+<p>这种统一的结构使得处理结果变得简单明了。尤其在需要并发执行多个独立异步操作，并且希望无论个别操作成功与否都能获取完整结果的场景中，<code>Promise.allSettled()</code>  无疑是最佳选择。它使我们能够构建更具弹性的应用程序，优雅地处理现实世界中不可避免的错误和异常情况。</p>
+
+            </div>
+            <div class="article-footer">
+                <div class="article-share">
+                    <span>分享文章：</span>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="linkedin"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <div class="article-actions">
+                    <button class="action-btn" id="backToTop"><i class="fas fa-arrow-up"></i> 返回顶部</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧相关文章 - 简化版 -->
+        
+        
+        <!-- 移动端目录切换按钮 -->
+        <button class="toc-toggle" aria-label="切换目录">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </article>
+    <script src="js/prism.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 目录切换功能
+        const toc = document.querySelector('.article-toc');
+        const tocToggle = document.querySelector('.toc-toggle');
+        
+        // 从 localStorage 获取目录状态
+        const tocCollapsed = localStorage.getItem('tocCollapsed') === 'true';
+        
+        // 初始化目录状态
+        if (tocCollapsed) {
+            toc.classList.add('collapsed');
+        }
+        
+        // 切换按钮点击事件
+        tocToggle.addEventListener('click', () => {
+            toc.classList.toggle('collapsed');
+            localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
+        });
+        
+        // 生成目录
+        const content = document.querySelector('.article-content');
+        const tocContent = document.querySelector('.toc-content');
+        const headings = content.querySelectorAll('h2, h3');
+        
+        if (headings.length > 0) {
+            const tocList = document.createElement('ul');
+            
+            headings.forEach((heading, index) => {
+                // 添加锚点ID
+                const id = `heading-${index}`;
+                heading.id = id;
+                
+                // 创建目录项
+                const li = document.createElement('li');
+                li.className = `toc-${heading.tagName.toLowerCase()}`;
+                
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.textContent = heading.textContent;
+                
+                li.appendChild(link);
+                tocList.appendChild(li);
+                
+                // 添加锚点链接到标题
+                const anchor = document.createElement('a');
+                anchor.className = 'heading-anchor';
+                anchor.href = `#${id}`;
+                anchor.innerHTML = '<i class="fas fa-link"></i>';
+                anchor.title = '复制链接';
+                
+                // 点击锚点复制链接
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = window.location.href.split('#')[0] + '#' + id;
+                    navigator.clipboard.writeText(url).then(() => {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'copy-tooltip';
+                        tooltip.textContent = '链接已复制';
+                        document.body.appendChild(tooltip);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.add('show');
+                        }, 10);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.remove('show');
+                            setTimeout(() => {
+                                document.body.removeChild(tooltip);
+                            }, 300);
+                        }, 2000);
+                    });
+                });
+                
+                heading.appendChild(anchor);
+                
+                // 点击目录项时在移动端收起目录
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1280) {
+                        toc.classList.add('collapsed');
+                        localStorage.setItem('tocCollapsed', 'true');
+                    }
+                });
+            });
+            
+            tocContent.appendChild(tocList);
+        }
+        
+        // 目录滚动高亮
+        const observerOptions = {
+            root: null,
+            rootMargin: '-100px 0px -66%',
+            threshold: [0, 1]
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                const tocItem = document.querySelector(`.toc-content a[href="#${id}"]`);
+                
+                if (entry.isIntersecting) {
+                    // 移除其他项的高亮
+                    document.querySelectorAll('.toc-content a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // 添加当前项的高亮
+                    tocItem?.classList.add('active');
+                    
+                    // 将当前项滚动到可视区域
+                    if (tocItem) {
+                        const tocContent = document.querySelector('.toc-content');
+                        const itemTop = tocItem.offsetTop;
+                        const contentHeight = tocContent.clientHeight;
+                        const scrollTop = tocContent.scrollTop;
+                        
+                        if (itemTop < scrollTop || itemTop > scrollTop + contentHeight) {
+                            tocContent.scrollTo({
+                                top: itemTop - contentHeight / 2,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        headings.forEach(heading => observer.observe(heading));
+        
+        // 代码块复制功能
+        const codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach((block, index) => {
+            const container = block.parentNode;
+            if (container.className === 'code-block') {
+                const language = block.querySelector('code').className.match(/language-([a-z]+)/)?.[1] || 'code';
+                container.setAttribute('data-language', language);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-button';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = '复制代码';
+                
+                copyBtn.addEventListener('click', () => {
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+                
+                container.appendChild(copyBtn);
+            }
+        });
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 分享按钮
+        const shareButtons = document.querySelectorAll('.share-btn');
+        shareButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const platform = btn.getAttribute('data-platform');
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(document.title);
+                
+                let shareUrl = '';
+                switch (platform) {
+                    case 'twitter':
+                        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                        break;
+                    case 'facebook':
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                        break;
+                    case 'linkedin':
+                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                        break;
+                }
+                
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank', 'width=600,height=400');
+                }
+            });
+        });
+        
+        // 图片点击放大
+        const images = document.querySelectorAll('.article-content img');
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                
+                const imgClone = document.createElement('img');
+                imgClone.src = img.src;
+                imgClone.alt = img.alt;
+                
+                overlay.appendChild(imgClone);
+                document.body.appendChild(overlay);
+                
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 10);
+                
+                overlay.addEventListener('click', () => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(overlay);
+                    }, 300);
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>
