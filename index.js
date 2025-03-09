@@ -18,21 +18,28 @@ marked.setOptions({
   breaks: true, // 启用回车换行
   headerIds: true, // 为标题添加id
   mangle: false, // 不转义标题中的特殊字符
-  highlight: function(code, lang) {
-    const lines = code.split('\n').map(line => 
-      line ? `<span class="line">${line}</span>` : '<span class="line"> </span>'
-    ).join('');
+  highlight: function (code, lang) {
+    const lines = code
+      .split("\n")
+      .map((line) =>
+        line
+          ? `<span class="line">${line}</span>`
+          : '<span class="line"> </span>'
+      )
+      .join("");
 
-    return `<div class="code-block" data-language="${lang || 'text'}">
+    return `<div class="code-block" data-language="${lang || "text"}">
               <button class="copy-button" onclick="copyCode(this)">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
                 <span>复制代码</span>
               </button>
-              <pre><code class="language-${lang || 'text'}">${lines}</code></pre>
+              <pre><code class="language-${
+                lang || "text"
+              }">${lines}</code></pre>
             </div>`;
-  }
+  },
 });
 
 // HTML模板
@@ -42,10 +49,10 @@ const htmlTemplate = (content, metadata, relatedArticles) => `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${metadata.title || 'Untitled'}</title>
+    <title>${metadata.title || "Untitled"}</title>
     <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
-    <link rel="stylesheet" href="css/article.css">
-    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="../skill/css/article.css">
+    <link rel="stylesheet" href="../skill/css/prism.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
 </head>
@@ -68,18 +75,31 @@ const htmlTemplate = (content, metadata, relatedArticles) => `
         <!-- 中间文章主体 -->
         <main class="article-main">
             <header class="article-header">
-                <h1>${metadata.title || 'Untitled'}</h1>
+                <h1>${metadata.title || "Untitled"}</h1>
                 <div class="article-meta">
-                    ${metadata.time ? `
+                    ${
+                      metadata.time
+                        ? `
                     <time datetime="${metadata.time}">
                         <i class="far fa-calendar-alt"></i>
                         ${formatDate(metadata.time)}
-                    </time>` : ''}
-                    ${metadata.tags ? `
+                    </time>`
+                        : ""
+                    }
+                    ${
+                      metadata.tags
+                        ? `
                     <div class="article-tags">
-                        ${metadata.tags.map(tag => `<span class="tag"><i class="fas fa-tag"></i>${tag}</span>`).join('')}
+                        ${metadata.tags
+                          .map(
+                            (tag) =>
+                              `<span class="tag"><i class="fas fa-tag"></i>${tag}</span>`
+                          )
+                          .join("")}
                     </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                 </div>
             </header>
             <div class="article-content">
@@ -99,7 +119,9 @@ const htmlTemplate = (content, metadata, relatedArticles) => `
         </main>
 
         <!-- 右侧相关文章 - 简化版 -->
-        ${relatedArticles && relatedArticles.length > 0 ? `
+        ${
+          relatedArticles && relatedArticles.length > 0
+            ? `
         <aside class="article-sidebar">
             <div class="related-articles">
                 <div class="related-header">
@@ -109,22 +131,28 @@ const htmlTemplate = (content, metadata, relatedArticles) => `
                     </div>
                 </div>
                 <div class="related-list">
-                    ${relatedArticles.map(article => `
+                    ${relatedArticles
+                      .map(
+                        (article) => `
                         <a href="${article.filename}" class="related-item">
                             <h3>${article.title}</h3>
                         </a>
-                    `).join('')}
+                    `
+                      )
+                      .join("")}
                 </div>
             </div>
         </aside>
-        ` : ''}
+        `
+            : ""
+        }
         
         <!-- 移动端目录切换按钮 -->
         <button class="toc-toggle" aria-label="切换目录">
             <i class="fas fa-chevron-right"></i>
         </button>
     </article>
-    <script src="js/prism.js"></script>
+    <script src="../skill/js/prism.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // 目录切换功能
@@ -376,14 +404,15 @@ async function convertMarkdownToHtml() {
         );
 
         // 解析 frontmatter
-        const { data: metadata, content: markdownContent } = matter(fileContent);
-        
+        const { data: metadata, content: markdownContent } =
+          matter(fileContent);
+
         // 收集文章元数据
         articlesMetadata.push({
           title: metadata.title || path.basename(file, ".md"),
           tags: metadata.tags || [],
-          time: metadata.time || '',
-          filename: path.basename(file, ".md") + ".html"
+          time: metadata.time || "",
+          filename: path.basename(file, ".md") + ".html",
         });
       }
     }
@@ -396,13 +425,16 @@ async function convertMarkdownToHtml() {
           "utf-8"
         );
 
-        const { data: metadata, content: markdownContent } = matter(fileContent);
+        const { data: metadata, content: markdownContent } =
+          matter(fileContent);
         const htmlContent = marked(markdownContent);
 
         // 查找相关文章（具有相同标签的文章）
-        const relatedArticles = articlesMetadata.filter(article => {
-          return article.filename !== path.basename(file, ".md") + ".html" && // 排除当前文章
-                 article.tags?.some(tag => metadata.tags?.includes(tag)); // 至少有一个相同的标签
+        const relatedArticles = articlesMetadata.filter((article) => {
+          return (
+            article.filename !== path.basename(file, ".md") + ".html" && // 排除当前文章
+            article.tags?.some((tag) => metadata.tags?.includes(tag))
+          ); // 至少有一个相同的标签
         });
 
         // 生成HTML文件名
@@ -420,7 +452,11 @@ async function convertMarkdownToHtml() {
 
     // 生成文章索引页
     const indexHtml = generateIndexPage(articlesMetadata);
-    await fs.writeFile(path.join(__dirname, "skill", "index.html"), indexHtml, "utf-8");
+    await fs.writeFile(
+      path.join(__dirname, "skill", "index.html"),
+      indexHtml,
+      "utf-8"
+    );
     console.log("Created index.html");
 
     console.log("Conversion completed successfully!");
@@ -431,14 +467,16 @@ async function convertMarkdownToHtml() {
 
 // 生成索引页面
 function generateIndexPage(articles) {
-  const sortedArticles = articles.sort((a, b) => new Date(b.time) - new Date(a.time));
-  
+  const sortedArticles = articles.sort(
+    (a, b) => new Date(b.time) - new Date(a.time)
+  );
+
   // 收集所有标签
   const allTags = new Set();
-  articles.forEach(article => {
-    article.tags?.forEach(tag => allTags.add(tag));
+  articles.forEach((article) => {
+    article.tags?.forEach((tag) => allTags.add(tag));
   });
-  
+
   return `
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -451,7 +489,7 @@ function generateIndexPage(articles) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="../skill/css/article.css">
 </head>
 <body>
     <div class="site-header">
@@ -459,55 +497,81 @@ function generateIndexPage(articles) {
             <h1>灏天阁</h1>
             <p class="site-description">探索技术的无限可能</p>
         </div>
-        ${allTags.size > 0 ? `
+        ${
+          allTags.size > 0
+            ? `
         <div class="tags-filter">
             <div class="tags-title">
                 <i class="fas fa-tags"></i>
                 <span>文章标签</span>
             </div>
             <div class="tags-list">
-                ${Array.from(allTags).map(tag => `
+                ${Array.from(allTags)
+                  .map(
+                    (tag) => `
                     <span class="tag" data-tag="${tag}">
                         <i class="fas fa-tag"></i>
                         <span>${tag}</span>
                         <span class="tag-count">0</span>
                     </span>
-                `).join('')}
+                `
+                  )
+                  .join("")}
             </div>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
     </div>
     <div class="articles-list">
-        ${sortedArticles.map((article, index) => `
-            <article class="article-item" data-tags='${JSON.stringify(article.tags || [])}' style="--item-index: ${index}">
+        ${sortedArticles
+          .map(
+            (article, index) => `
+            <article class="article-item" data-tags='${JSON.stringify(
+              article.tags || []
+            )}' style="--item-index: ${index}">
                 <div class="article-content">
                     <h2><a href="${article.filename}">${article.title}</a></h2>
                     <div class="article-meta">
                         <div class="meta-left">
-                            ${article.time ? `
+                            ${
+                              article.time
+                                ? `
                                 <time datetime="${article.time}">
                                     <i class="far fa-calendar-alt"></i>
                                     ${formatDate(article.time)}
                                 </time>
-                            ` : ''}
+                            `
+                                : ""
+                            }
                         </div>
-                        ${article.tags?.length > 0 ? `
+                        ${
+                          article.tags?.length > 0
+                            ? `
                         <div class="article-tags">
-                            ${article.tags.map(tag => `
+                            ${article.tags
+                              .map(
+                                (tag) => `
                                 <span class="tag">
                                     <i class="fas fa-tag"></i>
                                     <span>${tag}</span>
                                 </span>
-                            `).join('')}
+                            `
+                              )
+                              .join("")}
                         </div>
-                        ` : ''}
+                        `
+                            : ""
+                        }
                     </div>
                 </div>
                 <div class="article-arrow">
                     <i class="fas fa-arrow-right"></i>
                 </div>
             </article>
-        `).join('')}
+        `
+          )
+          .join("")}
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
