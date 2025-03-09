@@ -82,6 +82,63 @@
         max-width: 800px;
       }
 
+      .author-profile {
+        margin-bottom: 2rem;
+        animation: fadeSlideUp 1s ease-out;
+      }
+
+      .author-avatar {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 1.5rem;
+      }
+
+      .author-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary-color);
+        transition: transform var(--transition-speed);
+      }
+
+      .author-avatar:hover img {
+        transform: scale(1.05);
+      }
+
+      .avatar-glow {
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at center,
+          var(--primary-color) 0%,
+          transparent 70%
+        );
+        opacity: 0.3;
+        filter: blur(10px);
+        animation: pulse 2s infinite;
+      }
+
+      .author-name {
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        background: linear-gradient(120deg, var(--text-primary), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .author-bio {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+
       .hero h1 {
         font-size: 4rem;
         margin-bottom: 1.5rem;
@@ -207,6 +264,19 @@
           grid-template-columns: 1fr;
           padding: 2rem 1rem;
         }
+
+        .author-avatar {
+          width: 120px;
+          height: 120px;
+        }
+
+        .author-name {
+          font-size: 1.8rem;
+        }
+
+        .author-bio {
+          font-size: 1rem;
+        }
       }
 
       .cursor-animation {
@@ -230,15 +300,36 @@
           opacity: 0;
         }
       }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.3;
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0.3;
+        }
+      }
     </style>
   </head>
   <body>
     <main>
       <section class="hero">
         <div class="hero-content">
-          <p>
-            探索编程的艺术，发现技术的美。在这里，每一行代码都是一次创新的旅程。
-          </p>
+          <div class="author-profile">
+            <div class="author-avatar">
+              <img src="https://avatars.githubusercontent.com/u/28337425" alt="作者头像" />
+              <div class="avatar-glow"></div>
+            </div>
+            <h2 class="author-name">殷传博</h2>
+            <p class="author-bio">前端开发工程师 / 技术写作者</p>
+          </div>
+          <p>探索编程的艺术，发现技术的美。在这里，每一行代码都是一次创新的旅程。</p>
           <div class="cta-buttons">
             <a href="/skill" class="cta-button primary">
               <i class="fas fa-book-open"></i>
