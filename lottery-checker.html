@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>lottery-checker</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+
+      :root {
+        --bg-primary: #0a0a1f;
+        --bg-secondary: rgba(20, 20, 40, 0.7);
+        --text-primary: #ffffff;
+        --text-secondary: #9ca3af;
+        --red-ball: #ff4d4f;
+        --blue-ball: #1890ff;
+        --neon-red: rgba(255, 77, 79, 0.3);
+        --neon-blue: rgba(24, 144, 255, 0.3);
+        --gradient-primary: linear-gradient(135deg, #ff4d4f 0%, #f5222d 100%);
+        --gradient-secondary: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+        --shadow-neon: 0 0 10px rgba(255, 255, 255, 0.1),
+          0 0 20px rgba(255, 255, 255, 0.05),
+          0 0 30px rgba(255, 255, 255, 0.025);
+        --shadow-hover: 0 0 15px rgba(255, 255, 255, 0.2),
+          0 0 30px rgba(255, 255, 255, 0.1);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+        font-style: italic;
+        user-select: none;
+      }
+
+      body {
+        min-height: 100vh;
+        background: radial-gradient(
+          circle at center,
+          #1a1a3a 0%,
+          var(--bg-primary) 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        color: var(--text-primary);
+        position: relative;
+        overflow: hidden;
+        padding: 20px;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            45deg,
+            transparent 48%,
+            rgba(255, 255, 255, 0.03) 50%,
+            transparent 52%
+          ),
+          linear-gradient(
+            -45deg,
+            transparent 48%,
+            rgba(255, 255, 255, 0.03) 50%,
+            transparent 52%
+          );
+        background-size: 60px 60px;
+        animation: backgroundMove 30s linear infinite;
+      }
+
+      @keyframes backgroundMove {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 60px 60px;
+        }
+      }
+
+      .container {
+        height: calc(100vh - 40px);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 20px;
+        padding: 16px;
+        overflow: auto;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        box-shadow: var(--shadow-neon);
+        backdrop-filter: blur(20px);
+        position: relative;
+        z-index: 1;
+      }
+
+      .container::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* .container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, 
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 15%,
+          transparent 85%,
+          rgba(255, 255, 255, 0.1) 100%
+        );
+        border-radius: 16px;
+        pointer-events: none;
+      } */
+
+      .container::-webkit-scrollbar {
+        width: 4px;
+        background: transparent;
+      }
+
+      .container::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+      }
+
+      .container::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .code-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 380px;
+        max-width: 380px;
+      }
+
+      .code {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: var(--transition);
+        position: relative;
+        overflow: visible;
+        width: 100%;
+      }
+
+      .code::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.05),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      .code:hover::before {
+        left: 100%;
+      }
+
+      .code:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .code-item {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .code-item::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        opacity: 0.9;
+        z-index: -1;
+      }
+
+      .code-item.red::before {
+        background: var(--gradient-primary);
+        box-shadow: 0 0 15px var(--neon-red);
+      }
+
+      .code-item.blue::before {
+        background: var(--gradient-secondary);
+        box-shadow: 0 0 15px var(--neon-blue);
+      }
+
+      .code-item:hover {
+        transform: scale(1.1);
+      }
+
+      .code-index {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .code-index::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent 30%
+        );
+        animation: rotate 4s linear infinite;
+      }
+
+      @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .code-divider {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.2) 50%,
+          transparent 100%
+        );
+        margin: 8px 0;
+        position: relative;
+      }
+
+      .code-divider::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: inherit;
+        filter: blur(4px);
+        opacity: 0.5;
+      }
+
+      .code-divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      }
+
+      .info {
+        position: fixed !important;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 20px;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        box-shadow: var(--shadow-neon);
+        backdrop-filter: blur(20px);
+        animation: fadeIn 0.5s ease-out;
+        position: relative;
+        overflow: hidden;
+        width: 410px;
+        z-index: 2;
+      }
+
+      .info::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            45deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.03) 50%,
+            transparent 100%
+          ),
+          repeating-linear-gradient(
+            transparent 0px,
+            transparent 2px,
+            rgba(255, 255, 255, 0.03) 2px,
+            rgba(255, 255, 255, 0.03) 4px
+          );
+      }
+
+      .info::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--text-primary),
+          transparent
+        );
+        animation: scanline 2s linear infinite;
+      }
+
+      @keyframes scanline {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(100%);
+        }
+      }
+
+      .info span {
+        display: block;
+        font-family: "JetBrains Mono";
+        transition: var(--transition);
+        position: relative;
+        padding: 8px 0;
+        margin: 4px 0;
+        font-weight: 600;
+      }
+
+      /* .info span::before {
+        content: '>';
+        position: absolute;
+        left: -15px;
+        color: var(--text-primary);
+        opacity: 0;
+        transition: var(--transition);
+      } */
+
+      .info span:hover::before {
+        opacity: 1;
+        left: -10px;
+      }
+
+      .info span:hover {
+        color: var(--text-primary);
+        transform: translateX(10px);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.05),
+          transparent
+        );
+      }
+
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+          padding: 12px;
+          gap: 12px;
+        }
+
+        .container {
+          flex-direction: column;
+          padding: 10px;
+          gap: 16px;
+          margin-right: 0;
+        }
+
+        .code-group {
+          min-width: unset;
+          max-width: unset;
+          width: 100%;
+          gap: 6px;
+        }
+
+        .code {
+          padding: 6px;
+          gap: 6px;
+          justify-content: center;
+        }
+
+        .code-item,
+        .code-index {
+          width: 32px;
+          height: 32px;
+          font-size: 0.85rem;
+        }
+
+        .info {
+          position: relative;
+          width: 100%;
+          right: auto;
+          top: auto;
+          transform: none;
+          margin-top: 12px;
+          padding: 16px;
+        }
+      }
+
+      /* 添加数据加载动画 */
+      .info.loading span {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .info.loading span::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      /* 添加闪烁效果 */
+      .info::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+          transparent 0px,
+          transparent 2px,
+          rgba(255, 255, 255, 0.03) 2px,
+          rgba(255, 255, 255, 0.03) 4px
+        );
+        transform: rotate(45deg);
+        animation: glitch 10s linear infinite;
+      }
+
+      @keyframes glitch {
+        0% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 0.3;
+        }
+        100% {
+          opacity: 0.7;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .code-item.matched {
+        animation: pulse 2s ease-in-out infinite;
+        box-shadow: 0 0 30px rgba(82, 196, 26, 1),
+          inset 0 0 20px rgba(82, 196, 26, 0.8);
+        transform: scale(1.2);
+        z-index: 1;
+        border: 2px solid rgba(82, 196, 26, 1);
+      }
+
+      .code-item.matched::before {
+        opacity: 1;
+        filter: brightness(1.5);
+        background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+      }
+
+      .code-item.matched::after {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        background: conic-gradient(
+          from 0deg,
+          transparent,
+          rgba(82, 196, 26, 1),
+          transparent
+        );
+        animation: rotate 2s linear infinite;
+        z-index: -2;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 30px rgba(82, 196, 26, 1),
+            inset 0 0 20px rgba(82, 196, 26, 0.8);
+          border-color: rgba(82, 196, 26, 1);
+        }
+        50% {
+          box-shadow: 0 0 40px rgba(82, 196, 26, 1),
+            inset 0 0 25px rgba(82, 196, 26, 0.9);
+          border-color: rgba(82, 196, 26, 0.8);
+        }
+        100% {
+          box-shadow: 0 0 30px rgba(82, 196, 26, 1),
+            inset 0 0 20px rgba(82, 196, 26, 0.8);
+          border-color: rgba(82, 196, 26, 1);
+        }
+      }
+
+      /* 添加匹配数字的标记 */
+      .code-item.matched::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+        opacity: 1;
+        z-index: -1;
+      }
+
+      /* 添加外圈光环动画 */
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
+    <div class="info"></div>
+    <script>
+      let codes = localStorage.getItem("codes");
+      let htmls = [];
+      let winningNumbers = {
+        red: [],
+        blue: "",
+      };
+
+      function updateMatchingNumbers() {
+        if (!winningNumbers.red.length) return;
+
+        console.log("Winning numbers:", {
+          red: winningNumbers.red,
+          blue: winningNumbers.blue,
+        });
+
+        document.querySelectorAll(".code").forEach((code, index) => {
+          // 检查红球
+          const redBalls = code.querySelectorAll(".code-item.red");
+          console.log(
+            `Checking code ${index + 1}:`,
+            Array.from(redBalls).map((ball) => ball.textContent),
+            winningNumbers.blue
+          );
+
+          redBalls.forEach((ball) => {
+            // 确保进行字符串比较
+            if (winningNumbers.red.includes(ball.textContent.trim())) {
+              ball.classList.add("matched");
+              console.log("Matched red:", ball.textContent);
+            }
+          });
+
+          // 检查蓝球
+          const blueBall = code.querySelector(".code-item.blue");
+          // 确保进行字符串比较
+          if (blueBall.textContent.trim() === winningNumbers.blue.trim()) {
+            blueBall.classList.add("matched");
+            console.log("Matched blue:", blueBall.textContent);
+          }
+        });
+      }
+
+      if (codes) {
+        codes = codes.trim();
+        const codeList = codes.split("\n").filter(Boolean);
+        const result = codeList.map((code) => {
+          const [red, blue] = code.split(" + ");
+          return {
+            red: red.trim(),
+            blue: blue.trim(),
+          };
+        });
+        console.log("Parsed codes:", result);
+
+        // 将号码分组，每5个一组
+        const groups = [];
+        for (let i = 0; i < result.length; i += 5) {
+          groups.push(result.slice(i, i + 5));
+        }
+
+        htmls = groups.map((group, groupIndex) => {
+          return `
+            <div class="code-group">
+              ${group
+                .map((item, index) => {
+                  return `<div class="code">
+                  <span class="code-index">${groupIndex * 5 + index + 1}</span>
+                  ${item.red
+                    .split(",")
+                    .map((item) => {
+                      return `<span class="code-item red">${item.trim()}</span>`;
+                    })
+                    .join("")}
+                  <span class="code-item blue">${item.blue}</span>
+                </div>`;
+                })
+                .join("")}
+            </div>
+            ${
+              groupIndex !== Math.floor((result.length - 1) / 5)
+                ? '<div class="code-divider"></div>'
+                : ""
+            }
+          `;
+        });
+      }
+      document.querySelector(".container").innerHTML = htmls.join("");
+
+      const getLastestData = () => {
+        const infoEl = document.querySelector(".info");
+        infoEl.classList.add("loading");
+
+        fetch(
+          `https://www.mxnzp.com/api/lottery/common/latest?code=ssq&app_id=mfop6rrgg6fvmngd&app_secret=N1BsK2hadVZHU2hQRDQvMmRtdXBPQT09`
+        )
+          .then((data) => {
+            return data.json();
+          })
+          .then((res) => {
+            if (res?.code === 1) {
+              let openCode = res?.data?.openCode || "";
+              const time = res?.data?.time || "";
+              const [redNumbers, blueNumber] = openCode
+                .split("+")
+                .map((s) => s.trim());
+              winningNumbers.red = redNumbers.split(",").map((n) => n.trim());
+              winningNumbers.blue = blueNumber;
+              const textContent = `
+                <span>开奖日期：${time}</span>
+                <span>开奖号码：
+                  ${winningNumbers.red
+                    .map(
+                      (num) =>
+                        `<span class="code-item red" style="display: inline-flex; margin: 0 2px;">${num}</span>`
+                    )
+                    .join("")}
+                  <span class="code-item blue" style="display: inline-flex; margin: 0 2px;">${
+                    winningNumbers.blue
+                  }</span>
+                </span>
+              `;
+              infoEl.innerHTML = textContent;
+              infoEl.classList.remove("loading");
+
+              // 更新匹配的号码
+              updateMatchingNumbers();
+            }
+          });
+      };
+
+      const hour = new Date().getHours();
+      const infoDom = document.querySelector(".info");
+      if (hour >= 22) {
+        getLastestData();
+      } else {
+        infoDom.style.display = "none";
+      }
+    </script>
+  </body>
+</html>
