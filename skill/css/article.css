@@ -83,7 +83,7 @@ body {
 /* 文章主体内容区域优化 */
 .article-main {
   background: var(--card-bg);
-  padding: 3rem;
+  padding: 2rem 3rem;
   border-radius: var(--border-radius-lg);
   transition: all var(--transition-speed) var(--animation-timing);
   position: relative;
@@ -337,8 +337,8 @@ h3:hover .heading-anchor {
 
 /* 全局滚动条样式 */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -348,12 +348,8 @@ h3:hover .heading-anchor {
 
 ::-webkit-scrollbar-thumb {
   background: var(--text-tertiary);
-  border-radius: 4px;
+  border-radius: 0;
   transition: all 0.3s var(--animation-timing);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
 }
 
 ::-webkit-scrollbar-corner {
@@ -374,10 +370,6 @@ h3:hover .heading-anchor {
   border-radius: 2px;
 }
 
-.toc-content::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
 /* 相关文章列表滚动条样式 */
 .related-list::-webkit-scrollbar {
   width: 4px;
@@ -390,10 +382,6 @@ h3:hover .heading-anchor {
 .related-list::-webkit-scrollbar-thumb {
   background: var(--text-tertiary);
   border-radius: 2px;
-}
-
-.related-list::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
 }
 
 /* 代码块滚动条样式 */
@@ -410,10 +398,6 @@ pre::-webkit-scrollbar-thumb {
   background: var(--text-tertiary);
   border-radius: 3px;
   border: 2px solid var(--background-color);
-}
-
-pre::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
 }
 
 /* 响应式布局优化 */
@@ -523,16 +507,15 @@ pre::-webkit-scrollbar-thumb:hover {
   }
 
   .article-header h1 {
-    font-size: 1.8rem !important;
+    font-size: 1.6rem !important;
   }
 
   .article-content h2 {
-    font-size: 1.5rem !important;
-    margin: 0 !important;
+    font-size: 1.3rem !important;
   }
 
   .article-content h3 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
   }
   .article-header {
     margin-bottom: 1rem !important;
@@ -588,15 +571,15 @@ pre::-webkit-scrollbar-thumb:hover {
 
 /* 文章标题样式优化 */
 .article-header {
-  margin-bottom: 3rem;
+  margin-bottom: 0;
   position: relative;
-  padding-bottom: 2rem;
+  padding-bottom: 0;
 }
 
 .article-header h1 {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   line-height: 1.3;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   color: var(--text-primary);
   font-weight: 700;
   position: relative;
@@ -645,22 +628,6 @@ pre::-webkit-scrollbar-thumb:hover {
   transform: translateY(-2px);
 }
 
-.article-header::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--primary-light) 0%,
-    var(--primary-color) 50%,
-    var(--primary-light) 100%
-  );
-  border-radius: 2px;
-}
-
 /* 文章内容排版优化 */
 .article-content {
   font-size: 1rem;
@@ -673,8 +640,8 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 .article-content h2 {
-  font-size: 1.8rem;
-  margin: 1.2rem 0 1.2rem;
+  font-size: 1.5rem;
+  margin: 2rem 0 1rem;
   padding-bottom: 0.8rem;
   position: relative;
   color: var(--text-primary);
@@ -693,8 +660,8 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 .article-content h3 {
-  font-size: 1.4rem;
-  margin: 2rem 0 1rem;
+  font-size: 1.2rem;
+  margin: 1.5rem 0 1rem;
   color: var(--text-primary);
   position: relative;
   padding-left: 1rem;
@@ -704,7 +671,8 @@ pre::-webkit-scrollbar-thumb:hover {
   content: "";
   position: absolute;
   left: 0;
-  top: 0.2em;
+  top: 50%;
+  transform: translateY(-50%);
   height: 1em;
   width: 4px;
   background: var(--primary-color);
@@ -854,16 +822,12 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 .toc-content::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 
 .toc-content::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 2px;
-}
-
-.toc-content::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--text-tertiary);
+  border-radius: 0;
 }
 
 /* 标题锚点 */
@@ -1037,7 +1001,7 @@ h3:hover .heading-anchor {
 
 /* 文章底部样式优化 */
 .article-footer {
-  margin-top: 4rem;
+  margin-top: 0;
   padding-top: 2rem;
   position: relative;
 }
@@ -1808,7 +1772,7 @@ p code,
 li code,
 h3 code,
 h2 code {
-  color: var(--success-color);
+  color: #38bdf8;
   font-family: var(--font-serif);
 }
 
@@ -1875,4 +1839,10 @@ code[class*="language-"] {
 
 .line-numbers .line-numbers-rows {
   top: -5px !important;
+}
+
+@media (min-width: 767px) {
+  .article-content img {
+    max-width: 600px;
+  }
 }
