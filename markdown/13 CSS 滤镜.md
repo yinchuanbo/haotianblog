@@ -2,7 +2,7 @@
 title: "CSS 滤镜 filter / backdrop-filter：模糊、透明图阴影、调色、毛玻璃、渐进式模糊效果"
 tags:
   - filter / backdrop-filter
-time: 2025-03-10 20:23:43
+time: 2025-03-10 21:28:06
 ---
 
 ## 一. 滤镜 filter
@@ -27,7 +27,7 @@ div {
   需要填写数值，单位可以是`px` 、 `em` 、 `rem`等。
 - `brightness`**：明度**
   调整亮度，需要填写百分比值：100%为原本的明度，往下是调暗，往上是调亮。
-- `contrast` ：对比度
+- `contrast`: 对比度
   调整对比度，需要填写百分比值：100%为原本的对比度，往下是减低，往上是增加。
 - `grayscale` ：灰阶
   转为灰阶，需要填写 0 到 1 之间的值，1 代表完全灰阶。
@@ -42,8 +42,7 @@ div {
 - `saturate` ：饱和度
   调整饱和度，需要填写百分比值：100%为原本的对比度，往下是减低，往上是增加。
 - `drop-shadow` **：阴影**
-  在图片中非透明的周围加上阴影，这针对透明图片超好用！
-  例如，如果单单为透明图片加上基本的阴影`box-shadow` ，会像下方图片一样悲剧，阴影没有加在实际图案的周围，但用了`filter`的`drop-shadow`就能为实际图案的边缘加上阴影：
+  在图片中非透明的周围加上阴影，这针对透明图片超好用！例如，如果单单为透明图片加上基本的阴影`box-shadow` ，会像下方图片一样悲剧，阴影没有加在实际图案的周围，但用了`filter`的`drop-shadow`就能为实际图案的边缘加上阴影：
 
 <img src="./images/21.png" />
 
@@ -153,5 +152,6 @@ div {
 **解法：** 改变 filter 的元素，或是改使用 sticky 做到类似效果。
 
 > 延伸阅读：
-> - [#21 CSS Position：相对、绝对、固定、粘性定位 适合的定位](https://im1010ioio.hashnode.dev/css-position) 
+>
+> - [#21 CSS Position：相对、绝对、固定、粘性定位 适合的定位](https://im1010ioio.hashnode.dev/css-position)
 > - [filter 与 fixed 冲突的原因及解决方案 - 掘金](https://juejin.cn/post/6844904117974859783)
