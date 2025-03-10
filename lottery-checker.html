@@ -596,33 +596,26 @@
 
       function updateMatchingNumbers() {
         if (!winningNumbers.red.length) return;
-
-        console.log("Winning numbers:", {
-          red: winningNumbers.red,
-          blue: winningNumbers.blue,
-        });
-
         document.querySelectorAll(".code").forEach((code, index) => {
+          winningNumbers.red = winningNumbers.red.map(item => Number(item))
           // 检查红球
           const redBalls = code.querySelectorAll(".code-item.red");
-          console.log(
-            `Checking code ${index + 1}:`,
-            Array.from(redBalls).map((ball) => ball.textContent),
-            winningNumbers.blue
-          );
-
           redBalls.forEach((ball) => {
             // 确保进行字符串比较
-            if (winningNumbers.red.includes(ball.textContent.trim())) {
+            if (
+              winningNumbers.red.includes(Number(ball.textContent.trim()))
+            ) {
               ball.classList.add("matched");
               console.log("Matched red:", ball.textContent);
             }
           });
-
           // 检查蓝球
           const blueBall = code.querySelector(".code-item.blue");
           // 确保进行字符串比较
-          if (blueBall.textContent.trim() === winningNumbers.blue.trim()) {
+          if (
+            Number(blueBall.textContent.trim()) ===
+            Number(winningNumbers.blue.trim())
+          ) {
             blueBall.classList.add("matched");
             console.log("Matched blue:", blueBall.textContent);
           }
@@ -640,7 +633,6 @@
           };
         });
         console.log("Parsed codes:", result);
-
         // 将号码分组，每5个一组
         const groups = [];
         for (let i = 0; i < result.length; i += 5) {
@@ -692,7 +684,7 @@
               const [redNumbers, blueNumber] = openCode
                 .split("+")
                 .map((s) => s.trim());
-              winningNumbers.red = redNumbers.split(",").map((n) => n.trim());
+              winningNumbers.red = redNumbers.split(",").map((n) => n.trim());;
               winningNumbers.blue = blueNumber;
               const textContent = `
                 <span>开奖日期：${time}</span>
@@ -710,7 +702,6 @@
               `;
               infoEl.innerHTML = textContent;
               infoEl.classList.remove("loading");
-
               // 更新匹配的号码
               updateMatchingNumbers();
             }
@@ -719,11 +710,12 @@
 
       const hour = new Date().getHours();
       const infoDom = document.querySelector(".info");
-      if (hour >= 22) {
-        getLastestData();
-      } else {
-        infoDom.style.display = "none";
-      }
+      getLastestData();
+      // if (hour >= 22) {
+      //   getLastestData();
+      // } else {
+      //   infoDom.style.display = "none";
+      // }
     </script>
   </body>
 </html>
