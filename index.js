@@ -501,10 +501,6 @@ function generateIndexPage(articles) {
           allTags.size > 0
             ? `
         <div class="tags-filter">
-            <div class="tags-title">
-                <i class="fas fa-tags"></i>
-                <span>文章标签</span>
-            </div>
             <div class="tags-list">
                 ${Array.from(allTags)
                   .map(
