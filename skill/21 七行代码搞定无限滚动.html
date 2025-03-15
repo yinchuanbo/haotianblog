@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>你必须知道的前端性能指标</title>
+    <title>七行代码搞定无限滚动</title>
     <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
     <link rel="stylesheet" href="../skill/css/article.css">
     <link rel="stylesheet" href="../skill/css/prism.css">
@@ -30,43 +30,82 @@
         <!-- 中间文章主体 -->
         <main class="article-main">
             <header class="article-header">
-                <h1>你必须知道的前端性能指标</h1>
+                <h1>七行代码搞定无限滚动</h1>
                 <div class="article-meta">
                     
-                    <time datetime="Sat Mar 15 2025 06:46:05 GMT+0800 (中国标准时间)">
+                    <time datetime="Sat Mar 15 2025 17:28:38 GMT+0800 (中国标准时间)">
                         <i class="far fa-calendar-alt"></i>
                         2025年3月15日
                     </time>
                     
                     <div class="article-tags">
-                        <span class="tag"><i class="fas fa-tag"></i>性能优化</span>
+                        <span class="tag"><i class="fas fa-tag"></i>性能优化</span><span class="tag"><i class="fas fa-tag"></i>滚动优化</span>
                     </div>
                     
                 </div>
             </header>
             <div class="article-content">
-                <h2>前言</h2>
-<p>在当今快速发展的互联网时代，用户体验已成为衡量网站成功的关键因素之一。对于前端开发者来说，了解和优化前端性能指标是提升用户体验的必经之路。</p>
-<p>今天，我们就来聊聊那些影响用户体验的前端性能指标：FCP、LCP、TTFB、FID、TTI、CLS 和 TBT。</p>
-<h2>FCP（首次内容绘制）：内容加载的起跑线</h2>
-<p>FCP 衡量的是页面首次绘制内容的时间点，这包括文本、图像等。它是用户感知页面加载速度的第一个直观指标。一个快速的 FCP 可以显著减少用户的等待焦虑，通常目标是控制在 1.8 秒内。</p>
-<h2>LCP（最大内容绘制）：关注主要内容</h2>
-<p>LCP 关注的是页面主要内容的加载时间。这个指标对于用户获取关键信息至关重要。例如，新闻网站的主图或电商网站的产品图片。谷歌建议 LCP 应在 2.5 秒内完成，以提供良好的用户体验。</p>
-<h2>TTFB（首字节时间）：服务器响应速度</h2>
-<p>TTFB 衡量的是浏览器从请求页面到收到第一个字节的时间。这个指标反映了服务器处理请求的速度和网络性能。一个快速的 TTFB 可以为页面加载打下良好的基础。</p>
-<h2>FID（首次输入延迟）：交互响应速度</h2>
-<p>FID 衡量的是用户首次与页面交互到浏览器开始响应的时间间隔。这个指标对于提供流畅的用户体验至关重要。谷歌建议 FID 应控制在 100 毫秒以内。</p>
-<h2>TTI（可交互时间）：完全可交互</h2>
-<p>TTI 衡量的是页面从开始加载到完全可交互的时间。这个指标综合考虑了 JavaScript 加载、解析和执行等多个因素。一个较短的 TTI 可以让用户更快地开始使用页面功能。</p>
-<h2>CLS（累积布局偏移）：视觉稳定性</h2>
-<p>CLS 衡量的是页面在加载过程中的视觉稳定性。如果 CLS 过高，用户可能会感到困惑或误操作。谷歌建议将 CLS 控制在 0.1 或以下。</p>
-<h2>TBT（总阻塞时间）：减少用户等待</h2>
-<p>TBT 衡量的是在 FCP 和 TTI 之间，主线程被阻塞的总时间。较低的 TBT 意味着页面能够更快地变得可交互，减少用户等待的时间。</p>
-<p>了解这些性能指标后，开发者可以更有针对性地优化页面性能，提升用户体验。记住，每个毫秒的优化都可能带来用户满意度的巨大提升。</p>
-<p>虽然优化前端性能指标对于提升用户体验至关重要，但我们也不能忽视其他方面的因素，如代码的可维护性和项目的长期发展。过度追求性能优化可能会导致代码复杂度增加，甚至影响项目的可持续性。因此，我们需要找到一个平衡点，既要保证良好的用户体验，也要确保代码的简洁和项目的健康发展。</p>
-<p>在实际开发过程中，我们可以根据项目的特点和用户的实际需求来确定优化的重点。例如，对于一个内容驱动型的网站，LCP 和 CLS 可能是优化的重点；而对于一个交互性较强的应用，FID 和 TTI 则更为关键。此外，我们还可以利用现代工具和框架来辅助性能优化，如使用懒加载技术减少资源加载时间，或者通过代码分割提高页面的可交互性。</p>
-<p>同时，我们也应该关注性能优化的长期效果，定期对网站进行性能评估和调整。随着用户需求和技术的发展，性能优化是一个持续的过程，需要我们不断地学习和适应。</p>
-<p>总之，前端性能优化是一个复杂而又重要的过程，需要我们综合考虑多个因素，找到一个最佳的平衡点。通过合理的优化策略，我们可以在保证用户体验的同时，也确保项目的长期发展和成功。</p>
+                <p>无限滚动，又称瀑布流，已成为现代网站的标配。它能提升用户体验，让浏览更加流畅。分享下只需七行 JavaScript 代码，就能轻松实现高性能的无限滚动效果，并深入剖析其背后的性能优化原理。</p>
+<h2>传统实现的痛点</h2>
+<p>在谈论优化方案前，我们先来看看传统无限滚动实现中存在的问题：</p>
+<ol>
+<li>频繁的 DOM 操作：每次加载新内容都进行大量 DOM 节点创建和插入</li>
+<li>事件处理不当：scroll 事件触发频率极高，导致性能下降</li>
+<li>资源浪费：所有内容都保留在 DOM 中，即使已经滚出视口</li>
+<li>内存泄漏：长时间使用后，内存占用持续增加</li>
+</ol>
+<p>这些问题在数据量小时可能不明显，但当用户深度滚动时，页面会变得越来越卡顿，甚至崩溃。</p>
+<h2>七行代码的魔力</h2>
+<p>下面是经过优化的无限滚动核心代码：</p>
+<pre><code class="language-js">const observer = new IntersectionObserver((entries) =&gt; {
+  if (entries[0].isIntersecting &amp;&amp; !isLoading) {
+    isLoading = true;
+    loadMoreItems().then(() =&gt; (isLoading = false));
+  }
+});
+observer.observe(document.querySelector(&quot;#sentinel&quot;));
+</code></pre>
+<p>这短短七行代码解决了传统实现的所有痛点，实现了性能最优的无限滚动。看似简单，实则蕴含了多重性能优化技巧。</p>
+<h2>性能优化解析</h2>
+<h3>1. IntersectionObserver 代替 Scroll 事件</h3>
+<p>传统实现通常依赖于 scroll 事件：</p>
+<pre><code class="language-js">window.addEventListener(&quot;scroll&quot;, () =&gt; {
+  // 检查是否滚动到底部并加载更多
+});
+</code></pre>
+<p>问题在于 scroll 事件触发极为频繁（可达每秒数十甚至数百次），即使使用节流（throttle）或防抖（debounce）技术，也会有性能损耗。</p>
+<p>而 IntersectionObserver 是浏览器原生提供的 API，它能够异步观察目标元素与视口的交叉状态，只在需要时触发回调，极大减少了不必要的计算。</p>
+<h3>2. 虚拟列表与 DOM 回收</h3>
+<p>真正高效的无限滚动不仅是加载新内容，更重要的是管理已有内容。完整实现中，我们需要：</p>
+<img src="./images/29.webp" />
+
+<p>这种技术被称为&quot;DOM 回收&quot;，确保 DOM 树的大小保持在可控范围内。</p>
+<h3>3. 状态锁避免重复请求</h3>
+<p>注意代码中的<code>isLoading</code>状态锁，它防止在前一批数据加载完成前触发新的请求：</p>
+<img src="./images/30.webp" />
+
+<p>这个简单的状态管理避免了数据重复加载，减少了不必要的网络请求和 DOM 操作。</p>
+<h3>4. 图片懒加载</h3>
+<p>在无限滚动中，图片处理尤为关键。结合 IntersectionObserver 实现图片懒加载：</p>
+<img src="./images/31.webp" />
+
+<p>这确保了只有进入视口附近的图片才会被加载，大大减少了带宽消耗和初始加载时间。</p>
+<h2>性能测试数据</h2>
+<p>在一个加载了 1000 条记录的测试页面上，传统方法与优化方法的对比：</p>
+<img src="./images/26.png" />
+
+<p>数据表明，优化后的实现几乎达到了 60fps 的流畅体验，而内存占用仅为传统方法的约 1/9。</p>
+<h2>实战应用</h2>
+<p>将核心代码扩展为可直接使用的完整实现：</p>
+<img src="./images/32.webp" />
+
+<p>使用示例：</p>
+<pre><code class="language-js">const container = document.querySelector(&quot;.content-container&quot;);
+const infiniteScroller = new InfiniteScroller(container, async (count) =&gt; {
+  const newItems = await fetchData(count);
+  renderItems(newItems, container);
+});
+</code></pre>
 
             </div>
             <div class="article-footer">
@@ -98,12 +137,12 @@
                             <h3>性能优化-你的瀑布流还不够懒</h3>
                         </a>
                     
-                        <a href="18 前端项目优化-让网站飞起来的秘籍.html" class="related-item">
-                            <h3>前端项目优化-让网站飞起来的秘籍</h3>
+                        <a href="17 你必须知道的前端性能指标.html" class="related-item">
+                            <h3>你必须知道的前端性能指标</h3>
                         </a>
                     
-                        <a href="21 七行代码搞定无限滚动.html" class="related-item">
-                            <h3>七行代码搞定无限滚动</h3>
+                        <a href="18 前端项目优化-让网站飞起来的秘籍.html" class="related-item">
+                            <h3>前端项目优化-让网站飞起来的秘籍</h3>
                         </a>
                     
                 </div>
