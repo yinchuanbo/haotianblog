@@ -1589,7 +1589,7 @@ h3:hover .heading-anchor {
 
 /* 标签筛选器优化 */
 .tags-filter {
-  max-width: 800px;
+  max-width: 90%;
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -2338,7 +2338,7 @@ pre[class*="language-"] {
 p code,
 li code,
 h3 code,
-h2 code {
+h2 code, td code {
   color: #38bdf8;
   font-family: var(--font-serif);
   margin: 0 5px;

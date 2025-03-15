@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端项目优化-让网站飞起来的秘籍</title>
+    <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="../skill/css/article.css">
+    <link rel="stylesheet" href="../skill/css/prism.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
+</head>
+<body class="line-numbers">
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-home">首页</a>
+    </nav>
+    <article class="article-container">
+        <!-- 左侧目录 -->
+        <aside class="article-toc">
+            <div class="toc-header">
+                <div class="toc-title">
+                    <i class="fas fa-list"></i>
+                    <span>文章目录</span>
+                </div>
+            </div>
+            <div class="toc-content"></div>
+        </aside>
+
+        <!-- 中间文章主体 -->
+        <main class="article-main">
+            <header class="article-header">
+                <h1>前端项目优化-让网站飞起来的秘籍</h1>
+                <div class="article-meta">
+                    
+                    <time datetime="Sat Mar 15 2025 06:51:35 GMT+0800 (中国标准时间)">
+                        <i class="far fa-calendar-alt"></i>
+                        2025年3月15日
+                    </time>
+                    
+                    <div class="article-tags">
+                        <span class="tag"><i class="fas fa-tag"></i>性能优化</span>
+                    </div>
+                    
+                </div>
+            </header>
+            <div class="article-content">
+                <p>在如今这个信息爆炸的时代，前端性能优化已经成为提升用户体验和网站竞争力的关键因素。一个加载迅速、响应灵敏的网站，不仅能吸引更多的用户，还能提高用户留存率和转化率。今天，就让我们一起深入探讨前端项目优化的方方面面，掌握那些能让网站“飞起来”的秘籍。</p>
+<h2>一、加载时性能优化</h2>
+<h3>按需加载，减少初始加载量</h3>
+<p>在大型项目中，若将所有组件一次性加载，会导致初始加载时间过长，严重影响用户体验。此时，按需加载便成为了我们的得力助手。以 Vue 为例，可以使用 Vue 的异步组件和 Webpack 的 import() 方法，实现组件的按需加载。这样，只有在用户真正访问某个页面时，相关的代码才会被加载，大大减少了初始加载时间，提升了页面响应速度。</p>
+<pre><code class="language-vue">const Home = () =&gt; import(/* webpackChunkName: &quot;home&quot; */ &#39;./views/Home.vue&#39;);
+const About = () =&gt; import(/* webpackChunkName: &quot;about&quot; */ &#39;./views/About.vue&#39;);
+</code></pre>
+<p>在 React 中，也有类似的实现方式，如使用 <code>React.lazy</code> 和 <code>Suspense</code> 组件进行路由级的懒加载。同时，为了进一步提升用户体验，还可以在鼠标移入导航栏时预加载路由组件，让用户在点击导航链接时能更快地看到页面内容。</p>
+<ul>
+<li><strong>Prefetch</strong>：适用于即将需要但当前页面不急需的资源，如用户可能访问的下一页的脚本、样式表等。浏览器会在空闲时间低优先级下载这些资源并缓存，以便用户稍后访问时可以更快加载。</li>
+<li><strong>Preload</strong>：用于显式告诉浏览器高优先级加载当前页面的关键资源，如重要的 JS、CSS、字体、图片等，避免在关键渲染路径上出现阻塞。</li>
+<li><strong>Preconnect</strong>：提前与第三方资源的域名建立 TCP 连接，减少连接时间，适用于重要的第三方资源，如 CDN、API 等。</li>
+<li><strong>DNS-Prefetch</strong>：提前解析域名的 DNS，适用于低优先级的跨域资源预解析，提升首次请求的速度。</li>
+</ul>
+<pre><code class="language-html">&lt;!-- Prefetch 示例 --&gt;
+&lt;link rel=&quot;prefetch&quot; href=&quot;next-page.js&quot; as=&quot;script&quot; /&gt;
+&lt;link rel=&quot;prefetch&quot; href=&quot;next-page.css&quot; as=&quot;style&quot; /&gt;
+
+&lt;!-- Preload 示例 --&gt;
+&lt;link rel=&quot;preload&quot; href=&quot;critical.js&quot; as=&quot;script&quot; /&gt;
+&lt;link rel=&quot;preload&quot; href=&quot;styles.css&quot; as=&quot;style&quot; /&gt;
+&lt;link
+  rel=&quot;preload&quot;
+  href=&quot;font.woff2&quot;
+  as=&quot;font&quot;
+  type=&quot;font/woff2&quot;
+  crossorigin=&quot;anonymous&quot;
+/&gt;
+
+&lt;!-- Preconnect 示例 --&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://api.example.com&quot; /&gt;
+
+&lt;!-- DNS-Prefetch 示例 --&gt;
+&lt;link rel=&quot;dns-prefetch&quot; href=&quot;//cdn.example.com&quot; /&gt;
+</code></pre>
+<h2>二、资源体积优化</h2>
+<h3>压缩图片，减少图片体积</h3>
+<p>图片往往是网页中体积较大的资源之一，对其进行优化可以显著减少页面加载时间。常见的图片压缩方法包括：</p>
+<ul>
+<li><strong>使用现代图片格式</strong>：如 WebP 格式，它在保持高质量的同时，文件体积比传统的 JPEG 和 PNG 格式更小。可以使用工具将图片转换为 WebP 格式，以减少图片体积。</li>
+<li><strong>删除图片中的元数据</strong>：一些图片文件中包含大量的元数据，如拍摄设备信息、地理坐标等，这些数据对于网页展示并无用处，可以使用工具将其删除，从而减小图片文件的大小。</li>
+<li><strong>调整图片尺寸和分辨率</strong>：根据网页的实际需求，合理调整图片的尺寸和分辨率，避免使用过大的图片，造成不必要的资源浪费。</li>
+</ul>
+<h3>字体优化，提高加载速度</h3>
+<p>在网页中使用自定义字体时，若不加以优化，可能会导致额外的加载时间。为了提高字体的加载速度，可以采取以下措施：</p>
+<ul>
+<li><strong>使用系统字体</strong>：优先考虑使用用户设备上已有的系统字体，这样可以避免额外的字体下载请求，直接利用用户的本地资源，加快页面渲染速度。</li>
+<li><strong>按需加载字体</strong>：如果必须使用自定义字体，可以使用  <code>@font-face</code>  规则按需加载所需的字体文件，而不是一次性加载所有字体变体，减少初始加载的资源体积。</li>
+</ul>
+<h2>三、代码优化</h2>
+<h3>减少重绘和重排，提升渲染性能</h3>
+<p>在网页渲染过程中，重绘和重排是不可避免的，但过多的重绘和重排会严重影响页面的性能。为了减少重绘和重排的次数，可以遵循以下原则：</p>
+<ul>
+<li><strong>批量修改 DOM</strong>：尽量避免频繁地修改 DOM 元素的样式或结构，而是将多个修改操作集中在一起进行，减少触发重绘和重排的次数。例如，可以先将元素设置为  <code>display: none</code>，进行一系列修改后再将其显示出来，这样可以将多次修改集中为一次重绘和重排。</li>
+<li><strong>使用 CSS 动画和过渡</strong>：在实现动画效果时，优先使用 CSS 的动画和过渡属性，而不是通过 JavaScript 定时器频繁修改元素样式。CSS 动画由浏览器优化执行，性能更优，且不会频繁触发重绘和重排。</li>
+</ul>
+<h3>代码压缩与混淆，减小文件体积</h3>
+<p>对 JavaScript 和 CSS 代码进行压缩和混淆，可以有效减小文件体积，减少网络传输时间。常用的工具如 Webpack、Gulp 或 Grunt 等，可以自动完成代码的压缩和合并任务。通过删除代码中的注释、多余的空格和换行，以及将变量名和函数名替换为简短的无意义字符，可以显著减小代码文件的大小，从而加快页面加载速度。</p>
+<h2>四、构建与部署优化</h2>
+<h3>使用 Webpack DLL Plugin，减少打包时间</h3>
+<p>在大型项目中，包含大量的第三方依赖库，每次构建时都重新编译这些稳定的依赖库会浪费大量时间。Webpack 的 DLL Plugin 可以将不常变动的第三方依赖单独编译，并在后续构建时直接引用，避免重复编译，大幅减少打包时间。</p>
+<pre><code class="language-js">// webpack.dll.js 配置文件示例
+const path = require(&quot;path&quot;);
+const webpack = require(&quot;webpack&quot;);
+
+module.exports = {
+  entry: {
+    vendor: [&quot;react&quot;, &quot;react-dom&quot;, &quot;lodash&quot;], // 需要预编译的库
+  },
+  output: {
+    path: path.resolve(__dirname, &quot;dll&quot;),
+    filename: &quot;[name].dll.js&quot;,
+    library: &quot;[name]_library&quot;,
+  },
+  plugins: [
+    new webpack.DllPlugin({
+      name: &quot;[name]_library&quot;,
+      path: path.resolve(__dirname, &quot;dll&quot;, &quot;[name]-manifest.json&quot;),
+    }),
+  ],
+};
+</code></pre>
+<h3>启用 Webpack 缓存，加快增量构建</h3>
+<p>Webpack 提供了缓存机制，可以存储编译结果，在后续构建中直接复用，从而提高性能，减少不必要的重复编译。通过启用 Babel 缓存、Terser 压缩缓存以及持久化缓存等策略，可以有效加快增量构建的速度，提升开发效率。</p>
+<pre><code class="language-js">// Webpack 配置文件中启用缓存的示例
+module.exports = {
+  cache: {
+    type: &quot;filesystem&quot;, // 持久化缓存（存储在磁盘上）
+  },
+  module: {
+    rules: [
+      {
+        test: /.js$/,
+        use: [
+          {
+            loader: &quot;babel-loader&quot;,
+            options: {
+              cacheDirectory: true, // 启用 Babel 缓存
+            },
+          },
+        ],
+      },
+    ],
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        cache: true, // 开启压缩缓存
+      }),
+    ],
+  },
+};
+</code></pre>
+<h2>五、性能监控与持续优化</h2>
+<p>为了确保前端性能的持续提升，建立有效的性能监控体系至关重要。可以引入内部前端监控平台，如烛龙，将性能指标落到监控平台，实现可视化的监控前端性能指标。通过实时监测页面的加载时间、渲染时间、资源加载情况等关键指标，及时发现性能问题，并针对性地进行优化，形成一个持续优化的闭环。</p>
+<pre><code class="language-jsx">// 初始化性能监控组件示例
+useEffect(() =&gt; {
+  // 初始化测速组件
+  if (IS_PROD) {
+    // @ts-ignore
+    jmfe.profilerInit({
+      flag: xxx, // 这是应用 ID，需要先在监控平台申请
+      autoReport: true,
+      autoAddStaticReport: true,
+      autoAddApiReport: true,
+      autoAddImageReport: false, // 如果图片多，切记关闭，否则存在性能问题
+      performanceReportTime: 8000,
+      profilingRate: 1,
+    });
+  }
+}, []);
+</code></pre>
+<h2>总结</h2>
+<p>前端项目优化是一个系统性工程，涉及加载优化、资源优化、代码优化、构建优化以及性能监控等多个方面。通过采用按需加载、预加载、图片压缩、代码压缩与混淆、构建缓存等技术手段，并结合有效的性能监控体系，我们能够显著提升前端项目的性能，为用户提供更快、更流畅的浏览体验。在实际项目中，我们需要根据项目的具体需求和特点，灵活运用这些优化方法，不断探索和实践，持续提升前端性能，让网站真正“飞起来”。</p>
+
+            </div>
+            <div class="article-footer">
+                <div class="article-share">
+                    <span>分享文章：</span>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="linkedin"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <div class="article-actions">
+                    <button class="action-btn" id="backToTop"><i class="fas fa-arrow-up"></i> 返回顶部</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧相关文章 - 简化版 -->
+        
+        <aside class="article-sidebar">
+            <div class="related-articles">
+                <div class="related-header">
+                    <div class="toc-title">
+                        <i class="fas fa-link"></i>
+                        <span>相关文章</span>
+                    </div>
+                </div>
+                <div class="related-list">
+                    
+                        <a href="07 性能优化-你的瀑布流还不够懒.html" class="related-item">
+                            <h3>性能优化-你的瀑布流还不够懒</h3>
+                        </a>
+                    
+                        <a href="17 你必须知道的前端性能指标.html" class="related-item">
+                            <h3>你必须知道的前端性能指标</h3>
+                        </a>
+                    
+                </div>
+            </div>
+        </aside>
+        
+        
+        <!-- 移动端目录切换按钮 -->
+        <button class="toc-toggle" aria-label="切换目录">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </article>
+    <script src="../skill/js/prism.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 目录切换功能
+        const toc = document.querySelector('.article-toc');
+        const tocToggle = document.querySelector('.toc-toggle');
+        
+        // 从 localStorage 获取目录状态
+        const tocCollapsed = localStorage.getItem('tocCollapsed') === 'true';
+        
+        // 初始化目录状态
+        if (tocCollapsed) {
+            toc.classList.add('collapsed');
+        }
+        
+        // 切换按钮点击事件
+        tocToggle.addEventListener('click', () => {
+            toc.classList.toggle('collapsed');
+            localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
+        });
+        
+        // 生成目录
+        const content = document.querySelector('.article-content');
+        const tocContent = document.querySelector('.toc-content');
+        const headings = content.querySelectorAll('h2, h3');
+        
+        if (headings.length > 0) {
+            const tocList = document.createElement('ul');
+            
+            headings.forEach((heading, index) => {
+                // 添加锚点ID
+                const id = `heading-${index}`;
+                heading.id = id;
+                
+                // 创建目录项
+                const li = document.createElement('li');
+                li.className = `toc-${heading.tagName.toLowerCase()}`;
+                
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.textContent = heading.textContent;
+                
+                li.appendChild(link);
+                tocList.appendChild(li);
+                
+                // 添加锚点链接到标题
+                const anchor = document.createElement('a');
+                anchor.className = 'heading-anchor';
+                anchor.href = `#${id}`;
+                anchor.innerHTML = '<i class="fas fa-link"></i>';
+                anchor.title = '复制链接';
+                
+                // 点击锚点复制链接
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = window.location.href.split('#')[0] + '#' + id;
+                    navigator.clipboard.writeText(url).then(() => {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'copy-tooltip';
+                        tooltip.textContent = '链接已复制';
+                        document.body.appendChild(tooltip);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.add('show');
+                        }, 10);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.remove('show');
+                            setTimeout(() => {
+                                document.body.removeChild(tooltip);
+                            }, 300);
+                        }, 2000);
+                    });
+                });
+                
+                heading.appendChild(anchor);
+                
+                // 点击目录项时在移动端收起目录
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1280) {
+                        toc.classList.add('collapsed');
+                        localStorage.setItem('tocCollapsed', 'true');
+                    }
+                });
+            });
+            
+            tocContent.appendChild(tocList);
+        }
+        
+        // 目录滚动高亮
+        const observerOptions = {
+            root: null,
+            rootMargin: '-100px 0px -66%',
+            threshold: [0, 1]
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                const tocItem = document.querySelector(`.toc-content a[href="#${id}"]`);
+                
+                if (entry.isIntersecting) {
+                    // 移除其他项的高亮
+                    document.querySelectorAll('.toc-content a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // 添加当前项的高亮
+                    tocItem?.classList.add('active');
+                    
+                    // 将当前项滚动到可视区域
+                    if (tocItem) {
+                        const tocContent = document.querySelector('.toc-content');
+                        const itemTop = tocItem.offsetTop;
+                        const contentHeight = tocContent.clientHeight;
+                        const scrollTop = tocContent.scrollTop;
+                        
+                        if (itemTop < scrollTop || itemTop > scrollTop + contentHeight) {
+                            tocContent.scrollTo({
+                                top: itemTop - contentHeight / 2,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        headings.forEach(heading => observer.observe(heading));
+        
+        // 代码块复制功能
+        const codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach((block, index) => {
+            const container = block.parentNode;
+            if (container.className === 'code-block') {
+                const language = block.querySelector('code').className.match(/language-([a-z]+)/)?.[1] || 'code';
+                container.setAttribute('data-language', language);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-button';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = '复制代码';
+                
+                copyBtn.addEventListener('click', () => {
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+                
+                container.appendChild(copyBtn);
+            }
+        });
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 分享按钮
+        const shareButtons = document.querySelectorAll('.share-btn');
+        shareButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const platform = btn.getAttribute('data-platform');
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(document.title);
+                
+                let shareUrl = '';
+                switch (platform) {
+                    case 'twitter':
+                        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                        break;
+                    case 'facebook':
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                        break;
+                    case 'linkedin':
+                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                        break;
+                }
+                
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank', 'width=600,height=400');
+                }
+            });
+        });
+        
+        // 图片点击放大
+        const images = document.querySelectorAll('.article-content img');
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                
+                const imgClone = document.createElement('img');
+                imgClone.src = img.src;
+                imgClone.alt = img.alt;
+                
+                overlay.appendChild(imgClone);
+                document.body.appendChild(overlay);
+                
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 10);
+                
+                overlay.addEventListener('click', () => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(overlay);
+                    }, 300);
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>
