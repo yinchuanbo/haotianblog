@@ -57,7 +57,6 @@ body {
   font-style: italic;
   color: var(--text-primary);
   background: linear-gradient(135deg, var(--background-color) 0%, #18181b 100%);
-  min-height: 100vh;
   /* max-width:960px; */
   margin: 0 auto;
   /* padding: 1rem; */
@@ -630,7 +629,7 @@ pre::-webkit-scrollbar-track {
 pre::-webkit-scrollbar-thumb {
   background: var(--text-tertiary);
   border-radius: 3px;
-  border: 2px solid var(--background-color);
+  box-shadow: 0 0 0 2px var(--background-color);
 }
 
 /* 响应式布局优化 */
@@ -672,7 +671,7 @@ pre::-webkit-scrollbar-thumb {
   .related-articles {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -1px 0 0 rgba(var(--border-color), 0.3);
     height: auto;
   }
 
@@ -853,12 +852,14 @@ pre::-webkit-scrollbar-thumb {
   border-radius: 20px;
   font-size: 0.8rem;
   transition: all 0.3s;
+  box-shadow: 0 0 0 1px var(--primary-light);
 }
 
 .article-tags .tag:hover {
   background: var(--primary-color);
   color: white;
   transform: translateY(-2px);
+  box-shadow: 0 0 0 1px var(--primary-color);
 }
 
 /* 文章内容排版优化 */
@@ -874,7 +875,7 @@ pre::-webkit-scrollbar-thumb {
 
 .article-content h2 {
   font-size: 1.5rem;
-  margin: 2rem 0 1rem;
+  /* margin: 2rem 0 1rem; */
   padding-bottom: 0.8rem;
   position: relative;
   color: var(--text-primary);
@@ -933,17 +934,15 @@ pre::-webkit-scrollbar-thumb {
   margin: 1.2rem 0;
   border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--card-shadow), 0 0 0 1px rgba(255, 255, 255, 0.1);
   transition: all var(--transition-speed) var(--animation-timing);
   position: relative;
   background: #0f1419;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .code-block:hover {
-  box-shadow: var(--card-shadow-hover);
+  box-shadow: var(--card-shadow-hover), 0 0 0 1px rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .code-block::before {
@@ -956,7 +955,7 @@ pre::-webkit-scrollbar-thumb {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
 }
 
@@ -1519,6 +1518,10 @@ h3:hover .heading-anchor {
   /* border-radius: var(--border-radius-lg); */
   color: white;
   box-shadow: var(--card-shadow);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-content {
@@ -1541,7 +1544,7 @@ h3:hover .heading-anchor {
 
 /* 标签筛选器优化 */
 .tags-filter {
-  max-width: 90%;
+  /* max-width: 90%; */
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -1560,6 +1563,7 @@ h3:hover .heading-anchor {
   flex-wrap: wrap;
   gap: 0.8rem;
   justify-content: center;
+  margin: 0 auto;
 }
 
 /* Advanced styling for tag filter elements */
@@ -1580,9 +1584,8 @@ h3:hover .heading-anchor {
   background: rgba(24, 24, 27, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.1);
+  
   /* Text styling */
   color: var(--text-secondary);
   letter-spacing: 0.02em;
@@ -1636,8 +1639,7 @@ h3:hover .heading-anchor {
 /* Hover effects */
 .tags-filter .tag:hover {
   transform: translateY(-3px);
-  border-color: rgba(239, 68, 68, 0.3);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(239, 68, 68, 0.2),
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(239, 68, 68, 0.3), 
     0 0 0 4px rgba(239, 68, 68, 0.05);
   color: var(--text-primary);
 }
@@ -1664,7 +1666,6 @@ h3:hover .heading-anchor {
 .tags-filter .tag.active {
   background: rgba(239, 68, 68, 0.15);
   color: #ffffff;
-  border-color: rgba(239, 68, 68, 0.5);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(239, 68, 68, 0.3),
     0 0 20px rgba(239, 68, 68, 0.15);
   transform: translateY(-2px);
@@ -1703,7 +1704,7 @@ h3:hover .heading-anchor {
   min-width: 1.8rem;
   text-align: center;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 /* Animation keyframes */
@@ -1786,10 +1787,9 @@ h3:hover .heading-anchor {
   justify-content: space-between;
   gap: 1.5rem;
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
   z-index: 1;
 }
@@ -1927,7 +1927,7 @@ h3:hover .heading-anchor {
   justify-content: center;
   border-radius: 50%;
   background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -1953,8 +1953,7 @@ h3:hover .heading-anchor {
   color: white;
   background: rgba(239, 68, 68, 0.8);
   transform: translateX(5px);
-  border-color: rgba(239, 68, 68, 0.8);
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4);
 }
 
 .article-item:hover .article-arrow::before {
@@ -2000,7 +1999,7 @@ h3:hover .heading-anchor {
   border-radius: 20px;
   font-size: 0.8rem;
   transition: all 0.3s ease;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
 }
 
 .article-item:hover .article-item-tag {

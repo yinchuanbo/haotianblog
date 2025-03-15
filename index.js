@@ -493,10 +493,6 @@ function generateIndexPage(articles) {
 </head>
 <body>
     <div class="site-header">
-        <div class="header-content">
-            <h1>灏天阁</h1>
-            <p class="site-description">探索技术的无限可能</p>
-        </div>
         ${
           allTags.size > 0
             ? `
