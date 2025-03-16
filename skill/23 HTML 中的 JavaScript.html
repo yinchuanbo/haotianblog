@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML 中的 JavaScript</title>
+    <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="../skill/css/article.css">
+    <link rel="stylesheet" href="../skill/css/prism.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
+</head>
+<body class="line-numbers">
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-home">首页</a>
+    </nav>
+    <article class="article-container">
+        <!-- 左侧目录 -->
+        <aside class="article-toc">
+            <div class="toc-header">
+                <div class="toc-title">
+                    <i class="fas fa-list"></i>
+                    <span>文章目录</span>
+                </div>
+            </div>
+            <div class="toc-content"></div>
+        </aside>
+
+        <!-- 中间文章主体 -->
+        <main class="article-main">
+            <header class="article-header">
+                <h1>HTML 中的 JavaScript</h1>
+                <div class="article-meta">
+                    
+                    <time datetime="Sun Mar 16 2025 04:37:45 GMT+0800 (中国标准时间)">
+                        <i class="far fa-calendar-alt"></i>
+                        2025年3月16日
+                    </time>
+                    
+                    <div class="article-tags">
+                        <span class="tag"><i class="fas fa-tag"></i>高级程序设计</span><span class="tag"><i class="fas fa-tag"></i>script 元素</span>
+                    </div>
+                    
+                </div>
+            </header>
+            <div class="article-content">
+                <h2>script 元素</h2>
+<p><strong>script 元素有下列 8 个属性：</strong></p>
+<h3>1. async:</h3>
+<p>可选，表示应该立即下载脚本，但不能妨碍页面上的其他操作，比如下载资源或等待其他脚本加载，这个属性只对外部脚本文件有效。</p>
+<h3>2. charset:</h3>
+<p>可选，使用 src 属性指定的代码所使用的字符集，这个属性很少用，因为大多数浏览器不在乎它的值。</p>
+<h3>3. crossorgin:</h3>
+<p>可选，配置相关请求的 CORS 设置，默认不适用 CORS。<code>crossorgin=&quot;anonymous&quot;</code> 表示对脚本文件的请求中不设置用户凭据标志。<code>crossorgin=&quot;use-credentials&quot;</code> 表示设置凭据标志，意味着发出的请求中会包含用户凭据。</p>
+<h3>4. defer:</h3>
+<p>可选，表示将脚本延迟到文档完全被解析和显示之后再执行，只对外部脚本文件有效。</p>
+<h3>5. integrity:</h3>
+<p>可选，允许比对接收到的资源和指定的加密签名以验证子资源完整性，如果接收到的资源的签名与这个属性指定的签名不匹配，则页面会报错，脚本不会执行。这个属性可以用于确保内容分发网络，不会提供恶意内容。</p>
+<h3>6. language:</h3>
+<p>废弃</p>
+<h3>7. src:</h3>
+<p>可选，指向包含要执行的脚本代码的外部文件。</p>
+<h3>8. type:</h3>
+<p>可选，代替 language 属性，表示代码中脚本语言的内容类型，按照惯例，这个值始终都是 <code>&quot;text/javascript&quot;</code>，尽管 <code>&quot;text/javascript&quot;</code> 和 <code>&quot;text/ecmascript&quot;</code> 都已经废弃了。</p>
+<p>JavaScript 文件的 MIME 类型通常是 <code>&quot;application/x-javascript&quot;</code>，不过给 type 属性这个值有可能导致脚本被忽略。有效的其他值还有 <code>&quot;application/javascript&quot;</code> 和 <code>&quot;application/ecmascript&quot;</code>。</p>
+<p>如果这个属性的值是 <code>module</code>，则代码会被当成 <code>ES6</code> 模块，只有这时候代码中才能出现 <code>import</code> 和 <code>export</code> 关键字。</p>
+<p>要嵌入行内 JavaScript 代码，就直接把代码挡在 <code>&lt;script&gt;</code> 元素中：</p>
+<pre><code class="language-html">&lt;script&gt;
+  function sayHi() {
+    console.log(&quot;Hi!&quot;);
+  }
+&lt;/script&gt;
+</code></pre>
+<p>包含在 <code>&lt;script&gt;</code> 内的代码会被从上到下逐行解释。</p>
+<p>在 <code>&lt;script&gt;</code> 元素中的代码被解释完成之前，页面的其余内容不会被加载，也不会被显示。</p>
+<p>在使用行内 JavaScript 代码时，要注意代码中不能出现字符串 <code>&lt;/script&gt;</code>。比如，下面的代码会导致浏览器报错：</p>
+<pre><code class="language-html">&lt;script&gt;
+  function sayScript() {
+    console.log(&quot;&lt;/script&gt;&quot;)
+  }
+&lt;/script&gt;
+</code></pre>
+<p>浏览器解析行内脚本的方式决定了它在看到字符串 <code>&quot;&lt;/script&gt;&quot;</code> 时，会将其当成结束的 <code>&lt;/script&gt;</code> 标签，想避免这个问题，只需要转义字符串 <code>&quot;/&quot;</code> 即可。</p>
+<pre><code class="language-html">&lt;script&gt;
+  function sayScript() {
+    console.log(&quot;&lt;\/script&gt;&quot;);
+  }
+&lt;/script&gt;
+</code></pre>
+<p>这样修改之后，代码可以被浏览器接受，不会导致任何错误。</p>
+<h2>标签位置</h2>
+<p>过去，所有 <code>&lt;script&gt;</code> 元素都被放在页面的 <code>&lt;head&gt;</code> 标签内，如下面的例子所示：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;script src=&quot;example1.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;example2.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- 这里是页面内容 --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>把所有 JavaScript 文件都放在 <code>&lt;head&gt;</code> 里面，也就意味着必须把所有的 JavaScript 代码都下载、解析和解释完成后，才能开始渲染页面（页面在浏览器解析到 <code>&lt;body&gt;</code> 的起始标签时开始渲染）。对于需要很多 JavaScript 的页面，这会导致页面渲染的明显延迟，在此期间浏览器窗口完全空白。</p>
+<p>为了解决这个问题，现代 web 应用程序通常将所有 JavaScript 引用放在 <code>&lt;body&gt;</code> 元素中的页面内容后面，如下：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- 这里是页面内容 --&gt;
+    &lt;script src=&quot;example1.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;example2.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>这样一来，浏览器会在处理 JavaScript 代码之前先渲染页面，用户会感觉页面加载更快了，因为浏览器显示空白页面的时间短了。</p>
+<h3>推迟执行脚本</h3>
+<p>HTML 4.01 为 <code>&lt;script&gt;</code> 元素定义了一个叫 defer 的属性，这个属性表示脚本在执行的时候不会改变页面的结构。也就是说，脚本会被延迟到整个页面都解析完毕后再执行。因此，在 <code>&lt;script&gt;</code> 元素上设置 defer 属性，相当于告诉<code>浏览器立即下载</code>，但<code>延迟执行</code>。</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;script defer src=&quot;example1.js&quot;&gt;&lt;/script&gt;
+    &lt;script defer src=&quot;example2.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- 这里是页面内容 --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>虽然这个例子中的 <code>&lt;script&gt;</code> 元素包含在页面的 <code>&lt;head&gt;</code> 中，但它们会在浏览器解析到结束的 <code>&lt;/html&gt;</code> 标签后才会执行。</p>
+<p>HTML5 规范要求脚本应该按照它们出现的顺序执行，因此第一个推迟的脚本会在第二个推迟的脚本之前执行，而且两者都会在 <code>DOMContentLoaded</code> 事件之前执行。</p>
+<blockquote>
+<p>不过在现实中，推迟执行的脚本不一定总会按顺序执行或者在 DOMContentLoaded 事件之前执行，因此最好只包含一个这样的脚本。</p>
+</blockquote>
+<h3>异步执行脚本</h3>
+<p>HTML5 为 <code>&lt;script&gt;</code> 元素定义了 async 属性，从改变脚本处理方式上看，async 属性与 defer 类似，同样与 defer 类似，async 也只作用于外部脚本，也会告诉浏览器立即开始下载，不过与 defer 不同的是，标记为 async 的脚本并不保证能按照它们出现的次序执行。</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;script async src=&quot;example1.js&quot;&gt;&lt;/script&gt;
+    &lt;script async src=&quot;example2.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- 这里是页面内容 --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>在这个例子中，第二个脚本可能先于第一个脚本执行。因此，重点在于它们之间没有依赖关系。给脚本添加 async 属性的目的是告诉浏览器，不必等脚本下载和执行完后再加载页面，同样也不必等到该异步脚本下载和执行后再加载其他脚本，正因为如此，异步脚本不应该在加载期间修改 DOM。</p>
+<p>异步脚本保证会在页面的 load 事件前执行，但是可能会在 <code>DOMContentLoaded</code> 之前或之后。使用异步脚本也相当于隐式地告诉页面你不会使用 <code>document.write</code>，不过好的 web 开发实践根本就不推荐使用这个方法。</p>
+<h3>动态加载脚本</h3>
+<p>除了 <code>&lt;script&gt;</code> 标签，还有其他方式可以加载脚本，因为 JavaScript 可以使用 DOM.API，所以通过向 DOM 中动态添加 script 元素同样可以加载指定的脚本。</p>
+<p>只要创建一个 script 元素并将其添加到 DOM 即可。</p>
+<pre><code class="language-js">let script = document.createElement(&quot;script&quot;);
+script.src = &quot;mvscript.js&quot;;
+document.head.appendChild(script);
+</code></pre>
+<p>当然，在把 HTMLElement 元素添加到 DOM 且执行到这段代码之前不会发送请求，默认情况下，以这种方式创建的 <code>&lt;script&gt;</code> 元素是以异步方式加载的。</p>
+<p>以这种方式获取的资源对浏览器预加载是不可见的。这会严重影响它们在资源获取队列中的优先级。取决于你的应用逻辑以及具体的使用方式，动态加载脚本可能会严重影响性能。要想让预加载器知道这些动态请求文件的存在，可以在文档头部显式声明它们：</p>
+<pre><code class="language-html">&lt;link rel=&quot;preload&quot; href=&quot;myscript.js&quot; /&gt;
+</code></pre>
+<h2>行内代码和外部文件</h2>
+<p>虽然可以直接在 HTML 文件中嵌入 JavaScript 代码，但通常认为最佳实践是尽可能将 JavaScript 代码放在外部文件中。</p>
+<p>[未完待续]</p>
+
+            </div>
+            <div class="article-footer">
+                <div class="article-share">
+                    <span>分享文章：</span>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="javascript:void(0)" class="share-btn" data-platform="linkedin"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <div class="article-actions">
+                    <button class="action-btn" id="backToTop"><i class="fas fa-arrow-up"></i> 返回顶部</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧相关文章 - 简化版 -->
+        
+        
+        <!-- 移动端目录切换按钮 -->
+        <button class="toc-toggle" aria-label="切换目录">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </article>
+    <script src="../skill/js/prism.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 目录切换功能
+        const toc = document.querySelector('.article-toc');
+        const tocToggle = document.querySelector('.toc-toggle');
+        
+        // 从 localStorage 获取目录状态
+        const tocCollapsed = localStorage.getItem('tocCollapsed') === 'true';
+        
+        // 初始化目录状态
+        if (tocCollapsed) {
+            toc.classList.add('collapsed');
+        }
+        
+        // 切换按钮点击事件
+        tocToggle.addEventListener('click', () => {
+            toc.classList.toggle('collapsed');
+            localStorage.setItem('tocCollapsed', toc.classList.contains('collapsed'));
+        });
+        
+        // 生成目录
+        const content = document.querySelector('.article-content');
+        const tocContent = document.querySelector('.toc-content');
+        const headings = content.querySelectorAll('h2, h3');
+        
+        if (headings.length > 0) {
+            const tocList = document.createElement('ul');
+            
+            headings.forEach((heading, index) => {
+                // 添加锚点ID
+                const id = `heading-${index}`;
+                heading.id = id;
+                
+                // 创建目录项
+                const li = document.createElement('li');
+                li.className = `toc-${heading.tagName.toLowerCase()}`;
+                
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.textContent = heading.textContent;
+                
+                li.appendChild(link);
+                tocList.appendChild(li);
+                
+                // 添加锚点链接到标题
+                const anchor = document.createElement('a');
+                anchor.className = 'heading-anchor';
+                anchor.href = `#${id}`;
+                anchor.innerHTML = '<i class="fas fa-link"></i>';
+                anchor.title = '复制链接';
+                
+                // 点击锚点复制链接
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = window.location.href.split('#')[0] + '#' + id;
+                    navigator.clipboard.writeText(url).then(() => {
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'copy-tooltip';
+                        tooltip.textContent = '链接已复制';
+                        document.body.appendChild(tooltip);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.add('show');
+                        }, 10);
+                        
+                        setTimeout(() => {
+                            tooltip.classList.remove('show');
+                            setTimeout(() => {
+                                document.body.removeChild(tooltip);
+                            }, 300);
+                        }, 2000);
+                    });
+                });
+                
+                heading.appendChild(anchor);
+                
+                // 点击目录项时在移动端收起目录
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1280) {
+                        toc.classList.add('collapsed');
+                        localStorage.setItem('tocCollapsed', 'true');
+                    }
+                });
+            });
+            
+            tocContent.appendChild(tocList);
+        }
+        
+        // 目录滚动高亮
+        const observerOptions = {
+            root: null,
+            rootMargin: '-100px 0px -66%',
+            threshold: [0, 1]
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                const tocItem = document.querySelector(`.toc-content a[href="#${id}"]`);
+                
+                if (entry.isIntersecting) {
+                    // 移除其他项的高亮
+                    document.querySelectorAll('.toc-content a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // 添加当前项的高亮
+                    tocItem?.classList.add('active');
+                    
+                    // 将当前项滚动到可视区域
+                    if (tocItem) {
+                        const tocContent = document.querySelector('.toc-content');
+                        const itemTop = tocItem.offsetTop;
+                        const contentHeight = tocContent.clientHeight;
+                        const scrollTop = tocContent.scrollTop;
+                        
+                        if (itemTop < scrollTop || itemTop > scrollTop + contentHeight) {
+                            tocContent.scrollTo({
+                                top: itemTop - contentHeight / 2,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        headings.forEach(heading => observer.observe(heading));
+        
+        // 代码块复制功能
+        const codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach((block, index) => {
+            const container = block.parentNode;
+            if (container.className === 'code-block') {
+                const language = block.querySelector('code').className.match(/language-([a-z]+)/)?.[1] || 'code';
+                container.setAttribute('data-language', language);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-button';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = '复制代码';
+                
+                copyBtn.addEventListener('click', () => {
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+                
+                container.appendChild(copyBtn);
+            }
+        });
+        
+        // 返回顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 分享按钮
+        const shareButtons = document.querySelectorAll('.share-btn');
+        shareButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const platform = btn.getAttribute('data-platform');
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(document.title);
+                
+                let shareUrl = '';
+                switch (platform) {
+                    case 'twitter':
+                        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                        break;
+                    case 'facebook':
+                        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                        break;
+                    case 'linkedin':
+                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                        break;
+                }
+                
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank', 'width=600,height=400');
+                }
+            });
+        });
+        
+        // 图片点击放大
+        const images = document.querySelectorAll('.article-content img');
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                
+                const imgClone = document.createElement('img');
+                imgClone.src = img.src;
+                imgClone.alt = img.alt;
+                
+                overlay.appendChild(imgClone);
+                document.body.appendChild(overlay);
+                
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 10);
+                
+                overlay.addEventListener('click', () => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(overlay);
+                    }, 300);
+                });
+            });
+        });
+    });
+    </script>
+</body>
+</html>

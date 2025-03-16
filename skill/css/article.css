@@ -2291,7 +2291,8 @@ li code,
 h3 code,
 h2 code,
 td code {
-  color: #38bdf8;
+  /* color: #38bdf8; */
+  color: var(--danger-color);
   font-family: var(--font-serif);
   margin: 0 5px;
 }
