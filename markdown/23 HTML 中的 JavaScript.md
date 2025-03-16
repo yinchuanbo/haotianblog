@@ -190,4 +190,33 @@ document.head.appendChild(script);
 
 虽然可以直接在 HTML 文件中嵌入 JavaScript 代码，但通常认为最佳实践是尽可能将 JavaScript 代码放在外部文件中。
 
-[未完待续]
+- **可维护性**
+
+- **缓存**: 浏览器会根据特定的设置缓存所有外部链接的 JavaScript 文件，这意味着如果两个页面都用到同一个文件，则该文件只需要下载一次。这最终意味着页面加载会更快。
+
+## noscript 元素
+
+用于给不支持 JavaScript 的浏览器提供替代内容，虽然所有现代浏览器都支持 JavaScript，但对于禁用 JavaScript 的浏览器来说，这个元素仍然有它的用处。
+
+`<noscript>` 元素可以包含任何能出现的 `<body>` 中的 HTML 元素，`<script>` 除外，在下列两种情况下，浏览器将显示包含在 `<noscript>` 中的内容:
+
+- **浏览器不支持脚本**
+
+- **浏览器对脚本的支持被关闭**
+
+满足其中任何一个条件，包含在 `<noscript>` 中的内容就会被渲染，否则，浏览器不会渲染 `<noscript>` 中的内容。
+
+```html
+<!DOCTYPE html>
+  <head>
+    <title></title>
+    <script defer="defer" src="example1.js"></script>
+    <script defer="defer" src="example2.js"></script>
+  </head>
+  <body>
+    <noscript>
+     <p>This page requires a JavaScript-enabled broswer.</p>
+    </noscript>
+  </body>
+</html>
+```

@@ -726,12 +726,12 @@
 
       const hour = new Date().getHours();
       const infoDom = document.querySelector(".info");
-      getLastestData();
-      // if (hour >= 22) {
-      //   getLastestData();
-      // } else {
-      //   infoDom.style.display = "none";
-      // }
+      // getLastestData();
+      if (hour >= 22) {
+        getLastestData();
+      } else {
+        infoDom.style.display = "none";
+      }
     </script>
   </body>
 </html>

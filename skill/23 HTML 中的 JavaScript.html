@@ -166,7 +166,35 @@ document.head.appendChild(script);
 </code></pre>
 <h2>行内代码和外部文件</h2>
 <p>虽然可以直接在 HTML 文件中嵌入 JavaScript 代码，但通常认为最佳实践是尽可能将 JavaScript 代码放在外部文件中。</p>
-<p>[未完待续]</p>
+<ul>
+<li><p><strong>可维护性</strong></p>
+</li>
+<li><p><strong>缓存</strong>: 浏览器会根据特定的设置缓存所有外部链接的 JavaScript 文件，这意味着如果两个页面都用到同一个文件，则该文件只需要下载一次。这最终意味着页面加载会更快。</p>
+</li>
+</ul>
+<h2>noscript 元素</h2>
+<p>用于给不支持 JavaScript 的浏览器提供替代内容，虽然所有现代浏览器都支持 JavaScript，但对于禁用 JavaScript 的浏览器来说，这个元素仍然有它的用处。</p>
+<p><code>&lt;noscript&gt;</code> 元素可以包含任何能出现的 <code>&lt;body&gt;</code> 中的 HTML 元素，<code>&lt;script&gt;</code> 除外，在下列两种情况下，浏览器将显示包含在 <code>&lt;noscript&gt;</code> 中的内容:</p>
+<ul>
+<li><p><strong>浏览器不支持脚本</strong></p>
+</li>
+<li><p><strong>浏览器对脚本的支持被关闭</strong></p>
+</li>
+</ul>
+<p>满足其中任何一个条件，包含在 <code>&lt;noscript&gt;</code> 中的内容就会被渲染，否则，浏览器不会渲染 <code>&lt;noscript&gt;</code> 中的内容。</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;script defer=&quot;defer&quot; src=&quot;example1.js&quot;&gt;&lt;/script&gt;
+    &lt;script defer=&quot;defer&quot; src=&quot;example2.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;noscript&gt;
+     &lt;p&gt;This page requires a JavaScript-enabled broswer.&lt;/p&gt;
+    &lt;/noscript&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
 
             </div>
             <div class="article-footer">
