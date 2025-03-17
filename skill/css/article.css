@@ -1992,10 +1992,12 @@ pre[class*="language-"] {
 pre[class*="language-"] {
   padding-top: 0.8em !important;
   padding-bottom: 0.8em !important;
+  font-size: 0.975rem !important;
 }
 
 /* 高级标签样式 - 应用于索引页和文章页 */
-.tag {
+.article-tags .tag,
+.tags-filter .tag {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -2014,7 +2016,8 @@ pre[class*="language-"] {
   user-select: none;
 }
 
-.tag::before {
+.article-tags .tag::before,
+.tags-filter .tag::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -2027,7 +2030,8 @@ pre[class*="language-"] {
   transition: opacity 0.3s ease;
 }
 
-.tag:hover {
+.article-tags .tag:hover,
+.tags-filter .tag:hover {
   transform: translateY(-2px);
   background: rgba(24, 24, 27, 0.7);
   color: #f8fafc;
@@ -2035,17 +2039,20 @@ pre[class*="language-"] {
     inset 0 0 0 1px rgba(239, 68, 68, 0.3);
 }
 
-.tag:hover::before {
+.article-tags .tag:hover::before,
+.tags-filter .tag:hover::before {
   opacity: 1;
 }
 
-.tag i {
+.article-tags .tag i,
+.tags-filter .tag i {
   color: rgba(239, 68, 68, 0.8);
   font-size: 0.75rem;
   transition: transform 0.3s ease;
 }
 
-.tag:hover i {
+.article-tags .tag:hover i,
+.tags-filter .tag:hover i {
   transform: rotate(15deg) scale(1.1);
   color: #ef4444;
 }
@@ -2068,7 +2075,7 @@ body:not(.line-numbers) .article-tags .tag:hover {
 }
 
 /* 下拉菜单中的标签计数样式 */
-.dropdown-item .tag-count {
+.dropdown-container .dropdown-item .tag-count {
   margin-left: auto;
   background: rgba(239, 68, 68, 0.15);
   color: #94a3b8;
@@ -2081,7 +2088,7 @@ body:not(.line-numbers) .article-tags .tag:hover {
   transition: all 0.3s ease;
 }
 
-.dropdown-item:hover .tag-count {
+.dropdown-container .dropdown-item:hover .tag-count {
   background: rgba(239, 68, 68, 0.25);
   color: #f8fafc;
 }
