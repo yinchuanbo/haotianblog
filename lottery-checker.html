@@ -661,7 +661,9 @@
               ${group
                 .map((item, index) => {
                   return `<div class="code">
-                  <span class="code-index">${groupIndex * 5 + index + 1}</span>
+                  <span class="code-index" style="display: none">${
+                    groupIndex * 5 + index + 1
+                  }</span>
                   ${item.red
                     .split(",")
                     .map((item) => {
