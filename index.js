@@ -497,18 +497,35 @@ function generateIndexPage(articles) {
           allTags.size > 0
             ? `
         <div class="tags-filter">
-            <div class="tags-list">
-                ${Array.from(allTags)
-                  .map(
-                    (tag) => `
-                    <span class="tag" data-tag="${tag}">
-                        <i class="fas fa-tag"></i>
-                        <span>${tag}</span>
-                        <span class="tag-count">0</span>
-                    </span>
-                `
-                  )
-                  .join("")}
+            <div class="dropdown-container">
+                <button class="dropdown-button">
+                    <i class="fas fa-tag"></i>
+                    <span>选择标签</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <div class="dropdown-item" data-tag="">
+                        <span>全部文章</span>
+                    </div>
+                    ${Array.from(allTags)
+                      .map(
+                        (tag) => `
+                        <div class="dropdown-item" data-tag="${tag}">
+                            <i class="fas fa-tag"></i>
+                            <span>${tag}</span>
+                            <span class="tag-count">0</span>
+                        </div>
+                    `
+                      )
+                      .join("")}
+                </div>
+            </div>
+            <div class="active-tag-display">
+                <span class="active-tag-label">当前标签: </span>
+                <span class="active-tag-name">全部文章</span>
+                <button class="clear-tag-button" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
         `
@@ -579,30 +596,56 @@ function generateIndexPage(articles) {
                 });
             });
             
-            document.querySelectorAll('.tags-filter .tag').forEach(tagEl => {
+            document.querySelectorAll('.dropdown-item[data-tag]').forEach(tagEl => {
                 const tag = tagEl.dataset.tag;
-                const count = tagCounts[tag] || 0;
-                tagEl.querySelector('.tag-count').textContent = count;
+                if (tag) { // Skip the "全部文章" option
+                    const count = tagCounts[tag] || 0;
+                    tagEl.querySelector('.tag-count').textContent = count;
+                }
             });
         }
 
         // 标签筛选功能
-        const tags = document.querySelectorAll('.tags-filter .tag');
+        const dropdownButton = document.querySelector('.dropdown-button');
+        const dropdownContent = document.querySelector('.dropdown-content');
+        const tagItems = document.querySelectorAll('.dropdown-item');
         const articles = document.querySelectorAll('.article-item');
+        const activeTagName = document.querySelector('.active-tag-name');
+        const clearTagButton = document.querySelector('.clear-tag-button');
         let activeTag = null;
 
-        tags.forEach(tag => {
-            tag.addEventListener('click', () => {
-                const tagName = tag.dataset.tag;
+        // 切换下拉菜单显示
+        dropdownButton.addEventListener('click', () => {
+            dropdownContent.classList.toggle('show');
+        });
+
+        // 点击外部关闭下拉菜单
+        window.addEventListener('click', (e) => {
+            if (!e.target.matches('.dropdown-button') && 
+                !e.target.closest('.dropdown-button') && 
+                !e.target.matches('.dropdown-content') && 
+                !e.target.closest('.dropdown-content')) {
+                dropdownContent.classList.remove('show');
+            }
+        });
+
+        // 标签点击事件
+        tagItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const tagName = item.dataset.tag;
                 
-                // 切换标签激活状态
-                if (activeTag === tagName) {
-                    tag.classList.remove('active');
-                    activeTag = null;
-                } else {
-                    tags.forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
+                // 关闭下拉菜单
+                dropdownContent.classList.remove('show');
+                
+                // 更新显示的标签名
+                if (tagName) {
+                    activeTagName.textContent = item.querySelector('span:nth-child(2)').textContent;
+                    clearTagButton.style.display = 'inline-block';
                     activeTag = tagName;
+                } else {
+                    activeTagName.textContent = '全部文章';
+                    clearTagButton.style.display = 'none';
+                    activeTag = null;
                 }
                 
                 // 筛选文章
@@ -622,6 +665,22 @@ function generateIndexPage(articles) {
                         }, 300);
                     }
                 });
+            });
+        });
+
+        // 清除标签按钮
+        clearTagButton.addEventListener('click', () => {
+            activeTagName.textContent = '全部文章';
+            clearTagButton.style.display = 'none';
+            activeTag = null;
+            
+            // 显示所有文章
+            articles.forEach(article => {
+                article.style.display = '';
+                setTimeout(() => {
+                    article.style.opacity = '1';
+                    article.style.transform = 'translateY(0)';
+                }, 10);
             });
         });
         
