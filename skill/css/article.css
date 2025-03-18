@@ -1543,7 +1543,9 @@ h3:hover .heading-anchor {
   text-align: center;
   margin-bottom: 1.5rem;
   padding: 2rem 0;
-  background: linear-gradient(135deg, #18181b, #27272a);
+  background: rgba(24, 24, 27, 0.7);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-lg);
   /* border-radius: var(--border-radius-lg); */
   color: white;
   /* box-shadow: var(--card-shadow); */
@@ -1551,6 +1553,9 @@ h3:hover .heading-anchor {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 1.5rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 }
 
 .header-content {
@@ -1918,7 +1923,8 @@ code[class*="language-"] {
 p code,
 li code,
 h2 code,
-td code {
+td code,
+h3 code {
   font-family: "JetBrains Mono" !important;
   color: #ef4444 !important;
   margin: 0 5px;
@@ -2103,7 +2109,7 @@ body:not(.line-numbers) .article-tags .tag:hover {
 div.code-toolbar > .toolbar {
   top: 10px !important;
   right: 10px !important;
-  gap: 10px;
+  gap: 0.3rem;
   display: flex;
 }
 
