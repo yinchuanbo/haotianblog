@@ -1427,7 +1427,7 @@ h3:hover .heading-anchor {
 
 /* 文章内容图片样式 */
 .article-content img {
-  max-width: 100%;
+  max-width: 600px;
   border-radius: var(--border-radius);
   transition: all 0.3s;
   cursor: zoom-in;
