@@ -23,7 +23,7 @@
   --warning-color: #f59e0b;
   --danger-color: #ef4444;
   --border-color: #27272a;
-  --card-bg: #18181b;
+  --card-bg: #212121;
   --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.25), 0 4px 8px rgba(0, 0, 0, 0.2);
   --card-shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.3),
     0 6px 12px rgba(0, 0, 0, 0.25);
@@ -56,7 +56,7 @@ body {
   line-height: 1.7;
   font-style: italic;
   color: var(--text-primary);
-  background: linear-gradient(135deg, var(--background-color) 0%, #18181b 100%);
+  /* background: linear-gradient(135deg, var(--background-color) 0%, #18181b 100%); */
   /* max-width:960px; */
   margin: 0 auto;
   /* padding: 1rem; */
@@ -89,12 +89,7 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    125deg,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(24, 24, 27, 0.95) 70%,
-    rgba(45, 25, 30, 0.95) 100%
-  );
+  background: #171717;
   z-index: -5;
 }
 
@@ -1543,8 +1538,7 @@ h3:hover .heading-anchor {
   text-align: center;
   margin-bottom: 1.5rem;
   padding: 2rem 0;
-  background: rgba(24, 24, 27, 0.7);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  background: #212121;
   border-radius: var(--border-radius-lg);
   /* border-radius: var(--border-radius-lg); */
   color: white;
@@ -1805,7 +1799,7 @@ body:not(.line-numbers) .articles-list {
 /* Enhanced Article Item Cards - 仅应用于索引页 */
 body:not(.line-numbers) .article-item {
   position: relative;
-  background: rgba(24, 24, 27, 0.7);
+  background: #212121;
   border-radius: var(--border-radius-lg);
   padding: 1.8rem;
   display: flex;
@@ -1813,9 +1807,6 @@ body:not(.line-numbers) .article-item {
   justify-content: space-between;
   gap: 1.5rem;
   transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   height: 100%;
 }
 
@@ -1991,8 +1982,8 @@ tr:hover td {
 
 /* Code block styling */
 pre[class*="language-"] {
-  background: #27272a !important;
-  border-radius: 5px;
+  background: #313131 !important;
+  border-radius: 10px;
   /* padding: 1em 0.8em !important; */
 }
 
