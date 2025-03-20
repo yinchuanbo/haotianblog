@@ -4,33 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>lottery-checker</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 
       :root {
-        /* 深色主题变量 */
-        --bg-primary: #0f1219;
-        --bg-secondary: rgba(22, 26, 36, 0.85);
-        --bg-card: rgba(30, 36, 50, 0.7);
-        --text-primary: #e9ecef;
-        --text-secondary: #adb5bd;
-        --red-ball: #fa5252;
-        --blue-ball: #4263eb;
-        --neon-red: rgba(250, 82, 82, 0.4);
-        --neon-blue: rgba(66, 99, 235, 0.4);
-        --gradient-primary: linear-gradient(135deg, #fa5252 0%, #e03131 100%);
-        --gradient-secondary: linear-gradient(135deg, #4263eb 0%, #3b5bdb 100%);
-        --matched-gradient: linear-gradient(135deg, #40c057 0%, #2b8a3e 100%);
-        --matched-shadow: 0 0 15px rgba(64, 192, 87, 0.6);
-        --shadow-neon: 0 10px 25px rgba(0, 0, 0, 0.2),
-          0 5px 10px rgba(0, 0, 0, 0.15);
-        --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.3),
-          0 10px 15px rgba(0, 0, 0, 0.2);
-        --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3),
-          0 4px 10px rgba(0, 0, 0, 0.2);
-        --light-shadow: 0 4px 12px rgba(0, 0, 0, 0.2),
-          0 2px 4px rgba(0, 0, 0, 0.1);
-        --inner-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        /* 浅色主题变量 */
+        --bg-primary: #f8f9fa;
+        --bg-secondary: rgba(248, 249, 250, 0.92);
+        --bg-card: rgba(255, 255, 255, 0.9);
+        --text-primary: #212529;
+        --text-secondary: #495057;
+        --red-ball: #e74c3c;
+        --blue-ball: #3498db;
+        --neon-red: rgba(231, 76, 60, 0.3);
+        --neon-blue: rgba(52, 152, 219, 0.3);
+        --gradient-primary: linear-gradient(135deg, #e74c3c 0%, #ff6b6b 100%);
+        --gradient-secondary: linear-gradient(135deg, #3498db 0%, #4dabf7 100%);
+        --matched-gradient: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        --matched-shadow: 0 0 15px rgba(46, 204, 113, 0.6);
+        --shadow-neon: 0 6px 15px rgba(0, 0, 0, 0.08),
+          0 3px 6px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.1),
+          0 5px 10px rgba(0, 0, 0, 0.06);
+        --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05),
+          0 2px 5px rgba(0, 0, 0, 0.03);
+        --light-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+          0 1px 3px rgba(0, 0, 0, 0.02);
+        --inner-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
         --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         --border-radius-sm: 8px;
         --border-radius-md: 12px;
@@ -50,7 +51,7 @@
 
       body {
         min-height: 100vh;
-        background: linear-gradient(135deg, #0f1219 0%, #171d2b 100%);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -72,12 +73,12 @@
         bottom: 0;
         background-image: radial-gradient(
             circle at 15% 50%,
-            rgba(66, 99, 235, 0.08) 0%,
+            rgba(52, 152, 219, 0.06) 0%,
             transparent 35%
           ),
           radial-gradient(
             circle at 85% 30%,
-            rgba(250, 82, 82, 0.08) 0%,
+            rgba(231, 76, 60, 0.06) 0%,
             transparent 40%
           );
         z-index: 0;
@@ -94,18 +95,18 @@
         background-image: linear-gradient(
             45deg,
             transparent 48%,
-            rgba(255, 255, 255, 0.03) 50%,
+            rgba(0, 0, 0, 0.02) 50%,
             transparent 52%
           ),
           linear-gradient(
             -45deg,
             transparent 48%,
-            rgba(255, 255, 255, 0.03) 50%,
+            rgba(0, 0, 0, 0.02) 50%,
             transparent 52%
           );
         background-size: 60px 60px;
         animation: backgroundMove 30s linear infinite;
-        opacity: 0.5;
+        opacity: 0.7;
         z-index: 0;
       }
 
@@ -135,6 +136,7 @@
         position: relative;
         z-index: 1;
         animation: fadeIn 0.8s ease-out;
+        border: 1px solid rgba(0, 0, 0, 0.06);
       }
 
       .container::-webkit-scrollbar {
@@ -143,12 +145,12 @@
       }
 
       .container::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.1);
         border-radius: var(--border-radius-circle);
       }
 
       .container::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.2);
       }
 
       /* 添加顶部渐变装饰 */
@@ -196,6 +198,7 @@
         width: 100%;
         background: var(--bg-card);
         box-shadow: var(--light-shadow);
+        border: 1px solid rgba(0, 0, 0, 0.04);
       }
 
       /* 添加闪光效果 */
@@ -209,7 +212,7 @@
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.5),
           transparent
         );
         transition: 0.6s;
@@ -222,8 +225,9 @@
 
       .code:hover {
         transform: translateY(-3px);
-        background: rgba(40, 45, 60, 0.8);
+        background: rgba(255, 255, 255, 0.96);
         box-shadow: var(--shadow-hover);
+        border-color: rgba(0, 0, 0, 0.08);
       }
 
       .code-item {
@@ -240,6 +244,7 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.1);
       }
 
       .code-item::before {
@@ -248,7 +253,7 @@
         inset: 0;
         border-radius: var(--border-radius-circle);
         background: var(--gradient-primary);
-        opacity: 0.9;
+        opacity: 1;
         z-index: -1;
       }
 
@@ -264,7 +269,8 @@
 
       .code-item:hover {
         transform: scale(1.15) rotate(5deg);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.2);
       }
 
       .code-index {
@@ -277,7 +283,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.03);
         box-shadow: var(--inner-shadow);
         position: relative;
         overflow: hidden;
@@ -321,7 +327,7 @@
         background: linear-gradient(
           90deg,
           transparent 0%,
-          rgba(255, 255, 255, 0.08) 50%,
+          rgba(0, 0, 0, 0.06) 50%,
           transparent 100%
         );
         margin: 15px 0;
@@ -339,7 +345,7 @@
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.1),
+          rgba(0, 0, 0, 0.08),
           transparent
         );
         border-radius: var(--border-radius-sm);
@@ -357,12 +363,13 @@
         color: var(--text-secondary);
         font-size: 0.9rem;
         font-weight: 500;
-        box-shadow: var(--card-shadow), 0 0 30px rgba(0, 0, 0, 0.3);
+        box-shadow: var(--card-shadow), 0 0 20px rgba(0, 0, 0, 0.08);
         backdrop-filter: blur(15px);
         position: relative;
         overflow: hidden;
         width: fit-content;
         z-index: 2;
+        border: 1px solid rgba(0, 0, 0, 0.05);
       }
 
       /* 装饰性背景 */
@@ -374,8 +381,8 @@
           -45deg,
           transparent 0px,
           transparent 10px,
-          rgba(255, 255, 255, 0.03) 10px,
-          rgba(255, 255, 255, 0.03) 20px
+          rgba(0, 0, 0, 0.01) 10px,
+          rgba(0, 0, 0, 0.01) 20px
         );
       }
 
@@ -419,8 +426,8 @@
       .info span:hover {
         color: var(--text-primary);
         transform: translateX(8px);
-        background: rgba(255, 255, 255, 0.05);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.03);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
       }
 
       @media (max-width: 768px) {
@@ -487,7 +494,7 @@
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.1),
+          rgba(0, 0, 0, 0.05),
           transparent
         );
         animation: loading 1.5s infinite;
@@ -527,20 +534,9 @@
         background: var(--matched-gradient);
       }
 
-      /* 添加匹配成功发光边框 */
+      /* 移除匹配成功发光边框 */
       .code-item.matched::after {
-        content: "";
-        position: absolute;
-        inset: -4px;
-        border-radius: var(--border-radius-circle);
-        background: conic-gradient(
-          from 0deg,
-          transparent,
-          rgba(64, 192, 87, 0.8),
-          transparent
-        );
-        animation: rotate 2s linear infinite;
-        z-index: -2;
+        display: none;
       }
 
       @keyframes pulseMatch {
@@ -552,15 +548,6 @@
         }
         100% {
           box-shadow: 0 0 15px rgba(64, 192, 87, 0.5);
-        }
-      }
-
-      @keyframes rotate {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
         }
       }
 
@@ -599,11 +586,112 @@
           transform: translateY(-5px);
         }
       }
+
+      /* 添加导出按钮样式 */
+      .export-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-md);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: var(--shadow-neon);
+        transition: var(--transition);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .export-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .export-btn i {
+        font-size: 1.2rem;
+      }
+
+      /* 导出时的加载状态 */
+      .export-btn.exporting {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      /* 导出进度提示 */
+      .export-progress {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        background: var(--bg-card);
+        padding: 12px 20px;
+        border-radius: var(--border-radius-md);
+        box-shadow: var(--shadow-neon);
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        z-index: 100;
+        display: none;
+      }
+
+      .export-progress.show {
+        display: block;
+      }
+
+      /* 确保导出时号码清晰可见 */
+      .code-group.exporting {
+        background: white;
+        padding: 20px;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-neon);
+        margin: 10px 0;
+      }
+
+      .code-group.exporting .code {
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .code-group.exporting .code-item {
+        transform: none !important;
+        color: white !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      .code-group.exporting .code-item.red {
+        background: var(--red-ball) !important;
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+      }
+
+      .code-group.exporting .code-item.blue {
+        background: var(--blue-ball) !important;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3) !important;
+      }
+
+      .code-group.exporting .code-item.matched {
+        transform: scale(1.1) !important;
+        background: var(--matched-gradient) !important;
+        box-shadow: 0 2px 12px rgba(46, 204, 113, 0.4) !important;
+      }
+
+      .code-group.exporting .code-index {
+        color: var(--text-secondary) !important;
+        background: rgba(0, 0, 0, 0.05) !important;
+      }
     </style>
   </head>
   <body>
     <div class="container"></div>
     <div class="info"></div>
+    <button class="export-btn">
+      <i class="fas fa-download"></i>
+      导出号码图片
+    </button>
+    <div class="export-progress">正在生成图片...</div>
     <script>
       let codes = localStorage.getItem("codes");
       let htmls = [];
@@ -734,6 +822,57 @@
       } else {
         infoDom.style.display = "none";
       }
+
+      // 添加导出功能
+      document
+        .querySelector(".export-btn")
+        .addEventListener("click", async function () {
+          const btn = this;
+          const progress = document.querySelector(".export-progress");
+          const codeGroups = document.querySelectorAll(".code-group");
+
+          btn.classList.add("exporting");
+          progress.classList.add("show");
+
+          for (let i = 0; i < codeGroups.length; i++) {
+            const group = codeGroups[i];
+            progress.textContent = `正在生成第 ${i + 1}/${
+              codeGroups.length
+            } 组图片...`;
+
+            // 添加导出样式
+            group.classList.add("exporting");
+
+            try {
+              const canvas = await html2canvas(group, {
+                scale: 2, // 提高清晰度
+                backgroundColor: "#ffffff",
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+              });
+
+              // 转换为图片并下载
+              const link = document.createElement("a");
+              link.download = `lottery-numbers-group-${i + 1}.png`;
+              link.href = canvas.toDataURL("image/png");
+              link.click();
+
+              // 移除导出样式
+              group.classList.remove("exporting");
+
+              // 等待一小段时间再处理下一组
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            } catch (error) {
+              console.error("生成图片失败:", error);
+              progress.textContent = `生成第 ${i + 1} 组图片失败，请重试`;
+            }
+          }
+
+          btn.classList.remove("exporting");
+          progress.classList.remove("show");
+          progress.textContent = "正在生成图片...";
+        });
     </script>
   </body>
 </html>
