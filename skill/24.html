@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>告别 React 性能瓶颈</title>
+    <title>语言基础</title>
     <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
     <link rel="stylesheet" href="../skill/css/article.css">
     <link rel="stylesheet" href="../skill/css/prism.css">
@@ -30,162 +30,32 @@
         <!-- 中间文章主体 -->
         <main class="article-main">
             <header class="article-header">
-                <h1>告别 React 性能瓶颈</h1>
+                <h1>语言基础</h1>
                 <div class="article-meta">
                     
-                    <time datetime="Sun Mar 16 2025 02:11:08 GMT+0800 (中国标准时间)">
+                    <time datetime="Mon Mar 17 2025 05:38:09 GMT+0800 (中国标准时间)">
                         <i class="far fa-calendar-alt"></i>
-                        2025年3月16日
+                        2025年3月17日
                     </time>
                     
                     <div class="article-tags">
-                        <span class="tag"><i class="fas fa-tag"></i>React</span><span class="tag"><i class="fas fa-tag"></i>性能优化</span>
+                        <span class="tag"><i class="fas fa-tag"></i>高级程序设计</span>
                     </div>
                     
                 </div>
             </header>
             <div class="article-content">
-                <h2>1. 分析和监控性能</h2>
-<p>使用工具找出瓶颈：</p>
-<ul>
-<li>React DevTools：检查组件层次结构，识别重新渲染问题。</li>
-</ul>
-<pre><code class="language-sh">npm install --save-dev @react-devtools/extension
-</code></pre>
-<p>在浏览器中使用它来检查不必要的渲染。</p>
-<p>VS Code 扩展：</p>
-<ul>
-<li>ESLint：确保代码干净且优化。</li>
-<li>Prettier：强制执行一致的代码格式。</li>
-<li>Code Time：跟踪您的编码习惯，关注缓慢的部分。</li>
-</ul>
-<h2>2. 优化渲染</h2>
-<p>使用 <code>React.memo</code>：包装函数组件，避免不必要的重新渲染。</p>
-<pre><code class="language-jsx">import React, { memo } from &quot;react&quot;;
-
-constMyComponent = memo(({ prop }) =&gt; {
-  console.log(&quot;Rendering MyComponent&quot;);
-  return &lt;div&gt;{prop}&lt;/div&gt;;
-});
-
-exportdefaultMyComponent;
-</code></pre>
-<p>使用<code>useCallback</code>和<code>useMemo</code>：防止每次渲染时创建新的函数实例。</p>
-<pre><code class="language-jsx">import React, { useState, useCallback, useMemo } from &quot;react&quot;;
-
-constApp = () =&gt; {
-  const [count, setCount] = useState(0);
-
-  const expensiveComputation = useMemo(() =&gt; {
-    console.log(&quot;Expensive computation&quot;);
-    return count * 2;
-  }, [count]);
-
-  const handleClick = useCallback(() =&gt; {
-    setCount((prev) =&gt; prev + 1);
-  }, []);
-
-  return (
-    &lt;div&gt;
-      Count: {count}
-      &lt;br /&gt;
-      Double: {expensiveComputation}
-      &lt;br /&gt;
-      &lt;button onClick={handleClick}&gt;Increment&lt;/button&gt;
-    &lt;/div&gt;
-  );
-};
-
-export default App;
-</code></pre>
-<h2>3. 最小化状态重新渲染</h2>
-<p>提升状态：仅在必要时共享状态。</p>
-<p>避免 <strong>Props Drilling</strong> ：使用 Context API 或状态管理工具，如 Redux 或 Zustand。</p>
-<pre><code class="language-sh">npm install zustand
-</code></pre>
-<p>使用 Zustand 的示例：</p>
-<pre><code class="language-jsx">import create from &quot;zustand&quot;;
-
-const useStore = create((set) =&gt; ({
-  count: 0,
-  increment: () =&gt; set((state) =&gt; ({ count: state.count + 1 })),
-}));
-
-constCounter = () =&gt; {
-  const { count, increment } = useStore();
-
-  return (
-    &lt;div&gt;
-      Count: {count}
-      &lt;br /&gt;
-      &lt;button onClick={increment}&gt;Increment&lt;/button&gt;
-    &lt;/div&gt;
-  );
-};
-
-export default Counter;
-</code></pre>
-<h2>4. 代码分割和懒加载</h2>
-<p>通过分割代码和懒加载组件来减少初始加载时间：</p>
-<pre><code class="language-jsx">import React, { Suspense, lazy } from &quot;react&quot;;
-
-constLazyComponent = lazy(() =&gt; import(&quot;./LazyComponent&quot;));
-
-constApp = () =&gt; {
-  return (
-    &lt;Suspense fallback={&lt;div&gt;Loading...&lt;/div&gt;}&gt;
-      &lt;LazyComponent /&gt;
-    &lt;/Suspense&gt;
-  );
-};
-
-export default App;
-</code></pre>
-<h2>5. 使用正确的构建工具</h2>
-<p>使用 ESBuild 或 SWC 进行更快的构建：</p>
-<pre><code class="language-sh">npm install -D esbuild
-</code></pre>
-<p>切换到 Vite 以获得更快的开发服务器：</p>
-<pre><code class="language-sh">npm create vite@latest
-</code></pre>
-<h2>6. 审查您的依赖项</h2>
-<p>使用工具如 npm analyze 来识别大型库：</p>
-<pre><code class="language-sh">npm install -g source-map-explorer
-source-map-explorer build/static/js/*.js
-</code></pre>
-<p>用轻量级替代品替换沉重的库：</p>
-<ul>
-<li>用原生 JS 或较小的实用库如 remeda 替换 Lodash。</li>
-<li>使用 date-fns 代替 moment。</li>
-</ul>
-<h2>7. 提高 VS Code 性能</h2>
-<p>安装扩展以进行代码检查和性能建议：</p>
-<ul>
-<li>Auto Import：节省管理导入的时间。</li>
-<li>React Pure Components：突出显示可以优化的组件。</li>
-</ul>
-<p>调整 VS Code 设置：</p>
-<pre><code class="language-json">{
-  &quot;editor.quickSuggestions&quot;: {
-    &quot;other&quot;: true
-  },
-  &quot;files.autoSave&quot;: &quot;onFocusChange&quot;,
-  &quot;editor.formatOnSave&quot;: true,
-  &quot;typescript.tsserver.experimental.enableProjectDiagnostics&quot;: true
+                <h2>变量</h2>
+<h3>let 声明</h3>
+<p><strong>for 循环中的 let 声明</strong></p>
+<p>在 let 出现之前，for 循环定义的迭代变量会泄露到循环体外部。</p>
+<pre><code class="language-js">for (var i = 0; i &lt; 5; i++) {
+  // 循环逻辑
 }
+console.log(i); // 5
 </code></pre>
-<h2>8. 优化图片和资产</h2>
-<p>使用 Next.js Image Optimization 或 react-image 等库进行懒加载图片。</p>
-<p>压缩资产：</p>
-<pre><code class="language-sh">npm install imagemin-cli
-imagemin src/assets/* --out-dir=dist/assets
-</code></pre>
-<h2>9. 切换到替代品</h2>
-<p>如果 React 无法满足您的性能需求，请尝试其他框架：</p>
-<ul>
-<li>Solid.js：比 React 更小更快。</li>
-<li>Svelte：在编译时优化组件。</li>
-</ul>
+<p>改成使用 let 之后，这个问题就不存在了，因为迭代变量的作用域仅限于 for 循环块内部：</p>
+<p>【未完待续】</p>
 
             </div>
             <div class="article-footer">
@@ -213,20 +83,8 @@ imagemin src/assets/* --out-dir=dist/assets
                 </div>
                 <div class="related-list">
                     
-                        <a href="07 性能优化-你的瀑布流还不够懒.html" class="related-item">
-                            <h3>性能优化-你的瀑布流还不够懒</h3>
-                        </a>
-                    
-                        <a href="17 你必须知道的前端性能指标.html" class="related-item">
-                            <h3>你必须知道的前端性能指标</h3>
-                        </a>
-                    
-                        <a href="18 前端项目优化-让网站飞起来的秘籍.html" class="related-item">
-                            <h3>前端项目优化-让网站飞起来的秘籍</h3>
-                        </a>
-                    
-                        <a href="21 七行代码搞定无限滚动.html" class="related-item">
-                            <h3>七行代码搞定无限滚动</h3>
+                        <a href="23.html" class="related-item">
+                            <h3>HTML 中的 JavaScript</h3>
                         </a>
                     
                 </div>

@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>无限动画工具库</title>
+    <title>七行代码搞定无限滚动</title>
     <link rel="shortcut icon" href="code.svg" type="image/x-icon" />
     <link rel="stylesheet" href="../skill/css/article.css">
     <link rel="stylesheet" href="../skill/css/prism.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap">
 </head>
-<body class="line-numbers">
+<body>
     <nav class="nav-bar">
         <a href="index.html" class="nav-home">首页</a>
     </nav>
@@ -30,79 +30,82 @@
         <!-- 中间文章主体 -->
         <main class="article-main">
             <header class="article-header">
-                <h1>无限动画工具库</h1>
+                <h1>七行代码搞定无限滚动</h1>
                 <div class="article-meta">
                     
-                    <time datetime="Fri Mar 14 2025 03:48:06 GMT+0800 (中国标准时间)">
+                    <time datetime="Sat Mar 15 2025 17:28:38 GMT+0800 (中国标准时间)">
                         <i class="far fa-calendar-alt"></i>
-                        2025年3月14日
+                        2025年3月15日
                     </time>
                     
                     <div class="article-tags">
-                        <span class="tag"><i class="fas fa-tag"></i>动画库</span>
+                        <span class="tag"><i class="fas fa-tag"></i>性能优化</span><span class="tag"><i class="fas fa-tag"></i>滚动优化</span>
                     </div>
                     
                 </div>
             </header>
             <div class="article-content">
-                <p>今天，我们为大家介绍一款强大的 CSS 动画库——<strong>AnimXYZ</strong>，它能够帮助开发者轻松创建、定制和组合动画效果，而无需编写任何关键帧代码。</p>
-<img src="./images/03.gif">
-
-<h2>什么是 AnimXYZ？</h2>
-<p><strong>AnimXYZ</strong> 是一个基于 CSS 的动画工具库，专注于为网站提供灵活、高效的动画解决方案。</p>
-<img src="./images/24.webp">
-
-<p>通过 CSS 变量的使用，AnimXYZ 能够实现几乎无限的动画效果，极大地简化了开发流程。它支持 Vue、React、SCSS 和纯 CSS，适用于各种前端项目。</p>
-<img src="./images/25.webp">
-
-<h3>1. 组合性</h3>
-<p>AnimXYZ 的最大特点是其强大的组合性。开发者可以通过简单的类名组合来创建复杂的动画效果。例如，将渐隐（fade）、缩放（small）和从顶部掉落（up）组合起来，只需在元素标签上添加 <code>xyz=&quot;fade small up&quot;</code> 即可。这种直观的命名方式使得动画的创建变得异常简单。</p>
-<h3>2. 高度定制化</h3>
-<p>通过 CSS 变量，开发者可以轻松调整动画的各项参数，如延迟、持续时间、迭代次数等。例如，可以通过 <code>--xyz-translate-y: 42%;</code> 来调整动画的位移距离。这种高度的定制化能力使得 AnimXYZ 能够满足各种复杂的动画需求。</p>
-<h3>3. 即插即用</h3>
-<p>AnimXYZ 不仅支持纯 HTML 和 CSS 项目，还提供了与 Vue 和 React 的集成组件，使得在现代前端框架中使用动画变得更加便捷。无论是通过 npm 安装，还是通过 CDN 引入，AnimXYZ 都能轻松集成到你的项目中。</p>
-<h3>4. 嵌套与交错</h3>
-<p>AnimXYZ 支持嵌套动画和交错动画，开发者可以轻松实现元素列表的正序和倒序交错效果，同时与父级元素的动画同步。这种功能在制作复杂的动画场景时非常有用。</p>
-<h3>5. 高性能</h3>
-<p>AnimXYZ 的性能表现非常出色。基础功能仅需 2.68kB，包含实用工具时为 11.4kB。它通过硬件加速策略和动态负载均衡，确保动画的流畅性和高效性。</p>
-<h3>6. 代码量少</h3>
-<p>使用 AnimXYZ，开发者无需为每个动画需求编写自定义关键帧。通过简单的类名和属性配置，即可实现复杂的动画效果，大大减少了开发时间和代码量。</p>
-<h2>安装与使用</h2>
-<p>AnimXYZ 不仅支持纯 HTML 和 CSS 项目，还提供了与 Vue 和 React 的集成组件</p>
-<ul>
-<li><strong>HTML 集成方法</strong></li>
-</ul>
-<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@animxyz/core&quot; /&gt;
+                <p>无限滚动，又称瀑布流，已成为现代网站的标配。它能提升用户体验，让浏览更加流畅。分享下只需七行 JavaScript 代码，就能轻松实现高性能的无限滚动效果，并深入剖析其背后的性能优化原理。</p>
+<h2>传统实现的痛点</h2>
+<p>在谈论优化方案前，我们先来看看传统无限滚动实现中存在的问题：</p>
+<ol>
+<li>频繁的 DOM 操作：每次加载新内容都进行大量 DOM 节点创建和插入</li>
+<li>事件处理不当：scroll 事件触发频率极高，导致性能下降</li>
+<li>资源浪费：所有内容都保留在 DOM 中，即使已经滚出视口</li>
+<li>内存泄漏：长时间使用后，内存占用持续增加</li>
+</ol>
+<p>这些问题在数据量小时可能不明显，但当用户深度滚动时，页面会变得越来越卡顿，甚至崩溃。</p>
+<h2>七行代码的魔力</h2>
+<p>下面是经过优化的无限滚动核心代码：</p>
+<pre><code class="language-js">const observer = new IntersectionObserver((entries) =&gt; {
+  if (entries[0].isIntersecting &amp;&amp; !isLoading) {
+    isLoading = true;
+    loadMoreItems().then(() =&gt; (isLoading = false));
+  }
+});
+observer.observe(document.querySelector(&quot;#sentinel&quot;));
 </code></pre>
-<ul>
-<li><strong>Vue 安装</strong></li>
-</ul>
-<pre><code class="language-sh"># Vue2.x 安装
-npm install @animxyz/vue
+<p>这短短七行代码解决了传统实现的所有痛点，实现了性能最优的无限滚动。看似简单，实则蕴含了多重性能优化技巧。</p>
+<h2>性能优化解析</h2>
+<h3>1. IntersectionObserver 代替 Scroll 事件</h3>
+<p>传统实现通常依赖于 scroll 事件：</p>
+<pre><code class="language-js">window.addEventListener(&quot;scroll&quot;, () =&gt; {
+  // 检查是否滚动到底部并加载更多
+});
+</code></pre>
+<p>问题在于 scroll 事件触发极为频繁（可达每秒数十甚至数百次），即使使用节流（throttle）或防抖（debounce）技术，也会有性能损耗。</p>
+<p>而 IntersectionObserver 是浏览器原生提供的 API，它能够异步观察目标元素与视口的交叉状态，只在需要时触发回调，极大减少了不必要的计算。</p>
+<h3>2. 虚拟列表与 DOM 回收</h3>
+<p>真正高效的无限滚动不仅是加载新内容，更重要的是管理已有内容。完整实现中，我们需要：</p>
+<img src="./images/29.webp" />
 
-# Vue3.x 安装
-npm install @animxyz/vue3
+<p>这种技术被称为&quot;DOM 回收&quot;，确保 DOM 树的大小保持在可控范围内。</p>
+<h3>3. 状态锁避免重复请求</h3>
+<p>注意代码中的<code>isLoading</code>状态锁，它防止在前一批数据加载完成前触发新的请求：</p>
+<img src="./images/30.webp" />
+
+<p>这个简单的状态管理避免了数据重复加载，减少了不必要的网络请求和 DOM 操作。</p>
+<h3>4. 图片懒加载</h3>
+<p>在无限滚动中，图片处理尤为关键。结合 IntersectionObserver 实现图片懒加载：</p>
+<img src="./images/31.webp" />
+
+<p>这确保了只有进入视口附近的图片才会被加载，大大减少了带宽消耗和初始加载时间。</p>
+<h2>性能测试数据</h2>
+<p>在一个加载了 1000 条记录的测试页面上，传统方法与优化方法的对比：</p>
+<img src="./images/26.png" />
+
+<p>数据表明，优化后的实现几乎达到了 60fps 的流畅体验，而内存占用仅为传统方法的约 1/9。</p>
+<h2>实战应用</h2>
+<p>将核心代码扩展为可直接使用的完整实现：</p>
+<img src="./images/32.webp" />
+
+<p>使用示例：</p>
+<pre><code class="language-js">const container = document.querySelector(&quot;.content-container&quot;);
+const infiniteScroller = new InfiniteScroller(container, async (count) =&gt; {
+  const newItems = await fetchData(count);
+  renderItems(newItems, container);
+});
 </code></pre>
-<ul>
-<li><strong>React 安装</strong></li>
-</ul>
-<pre><code class="language-sh">npm install @animxyz/react
-</code></pre>
-<p>更多超酷的动画案例，请移步：<code>https://animxyz.com/docs</code></p>
-<h2>实用工具</h2>
-<ul>
-<li><strong>AnimXYZ</strong> 还提供了多种实用工具，如：</li>
-<li><strong>xyz-none</strong>：禁用元素的动画。</li>
-<li><strong>xyz-none-all</strong>：禁用元素及其子元素的动画。</li>
-<li><strong>xyz-absolute</strong>：在动画期间将元素设置为绝对定位。</li>
-<li><strong>xyz-paused</strong>：暂停元素的动画。</li>
-<li><strong>xyz-paused-all</strong>：暂停元素及其子元素的动画。</li>
-</ul>
-<p>AnimXYZ 通过其强大的功能和灵活的定制能力，为开发者提供了一个高效、便捷的动画解决方案。无论你是前端新手还是资深开发者，<strong>AnimXYZ</strong> 都能帮助你轻松实现各种复杂的动画效果，为你的网站增添更多活力。</p>
-<ul>
-<li><strong>GitHub 地址</strong>：<code>https://github.com/ingram-projects/animxyz</code></li>
-<li><strong>官方文档</strong>：<code>https://animxyz.com/</code></li>
-</ul>
 
             </div>
             <div class="article-footer">
@@ -119,6 +122,36 @@ npm install @animxyz/vue3
         </main>
 
         <!-- 右侧相关文章 - 简化版 -->
+        
+        <aside class="article-sidebar">
+            <div class="related-articles">
+                <div class="related-header">
+                    <div class="toc-title">
+                        <i class="fas fa-link"></i>
+                        <span>相关文章</span>
+                    </div>
+                </div>
+                <div class="related-list">
+                    
+                        <a href="07.html" class="related-item">
+                            <h3>性能优化-你的瀑布流还不够懒</h3>
+                        </a>
+                    
+                        <a href="17.html" class="related-item">
+                            <h3>你必须知道的前端性能指标</h3>
+                        </a>
+                    
+                        <a href="18.html" class="related-item">
+                            <h3>前端项目优化-让网站飞起来的秘籍</h3>
+                        </a>
+                    
+                        <a href="22.html" class="related-item">
+                            <h3>告别 React 性能瓶颈</h3>
+                        </a>
+                    
+                </div>
+            </div>
+        </aside>
         
         
         <!-- 移动端目录切换按钮 -->
